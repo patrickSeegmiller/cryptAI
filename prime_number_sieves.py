@@ -1,7 +1,7 @@
 import math
 import sys
 
-def sieve_of_eratosthenes(N):
+def sieve_of_eratosthenes(N: int) -> list[int]:
     """
     Generates a list of prime numbers up less than N using the Sieve of 
     Eratosthenes algorithm.
