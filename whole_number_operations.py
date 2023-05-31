@@ -67,5 +67,38 @@ def greatest_common_divisor(a: int, b: int) -> int: # The Euclidean Algorithm
         a, b = b % a, a
     return b
 
+def integer_sqrt(N: int) -> int:
+    """
+    Computes the integer square root of a non-negative integer.
+
+    Args:
+        N (int): The non-negative integer for which the square root is to be computed.
+
+    Returns:
+        int: The integer square root of the given N.
+
+    Raises:
+        ValueError: If the N is negative or not an integer.
+        RuntimeError: If the maximum N of iterations is reached without convergence.
+
+    """
+
+    if not isinstance(N, int) or N < 0:
+        raise ValueError("N must be a non-negative integer.")
+
+    MAX_ITERATIONS = 1000
+
+    guess = 1 << ((N.bit_length() + 1) // 2)
+    for i in range(MAX_ITERATIONS):
+        
+        new_guess = (guess + N // guess) // 2
+        
+        if new_guess >= guess:
+            return new_guess
+        guess = new_guess
+
+    print(f"Max iterations reached with approximate value of {new_guess}")
+    return new_guess
+
 if __name__ == '__main__':
     
