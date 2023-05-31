@@ -10,6 +10,11 @@ def absolute_value(n: int or float) -> int or float:
 
     """
 
+    # Input validation
+    if not isinstance(n, int) and not isinstance(n, float):
+        raise ValueError("n must be an integer or a float.")
+    
+    # Return the absolute value of n
     if n >= 0:
         return n
     else:
@@ -32,17 +37,22 @@ def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
         int: The result of `base`^`exponent` modulo `modulus`.
     """
 
+    # Input validation
+    if not isinstance(base, int) or not isinstance(exponent, int) or not isinstance(modulus, int) or exponent < 0 or modulus < 0:
+        raise ValueError("xponent, and modulus must be non-negative integers.")
+    
+    # Convert the exponent to binary and reverse it
     binary_N = f'{exponent:08b}'[::-1]
     exponents = [int(bit) for bit in binary_N]
     
+    # Compute the value of base^exponent modulo modulus
     power_of_base = base
-
     value = base ** exponents[0]
-
     for i in range(1, len(binary_N)):
         power_of_base = (power_of_base ** 2) % modulus
         value = (value * (power_of_base ** exponents[i])) % modulus
-        
+
+    # Return the result 
     return value
 
 def greatest_common_divisor(a: int, b: int) -> int: # The Euclidean Algorithm
@@ -62,11 +72,15 @@ def greatest_common_divisor(a: int, b: int) -> int: # The Euclidean Algorithm
 
     """
 
+    # Input validation
     if not isinstance(a, int) or not isinstance(b, int) or a < 0 or b < 0:
         raise ValueError("a and b must be non-negative integers.")
 
+    # Use the Euclidean Algorithm to compute the GCD
     while a != 0:
         a, b = b % a, a
+    
+    # Return the GCD
     return b
 
 def integer_sqrt(N: int or float) -> int:
@@ -85,21 +99,46 @@ def integer_sqrt(N: int or float) -> int:
 
     """
 
+    # Input validation
     if not isinstance(N, int) or not isinstance(N, float) or N < 0:
         raise ValueError("N must be a non-negative integer.")
 
+    # Maximum number of iterations
     MAX_ITERATIONS = 1000
 
+    # Initial guess for the square root of N
     guess = 1 << ((N.bit_length() + 1) // 2)
+
+    # Use a binary search until convergence or maximum number of iterations is reached
     for i in range(MAX_ITERATIONS):
-        
+
         new_guess = (guess + N // guess) // 2
-        
+        #
         if new_guess >= guess:
             return new_guess
         guess = new_guess
 
+    # If the maximum number of iterations is reached without convergence, raise an error
     raise RuntimeError(f"Maximum number of iterations ({MAX_ITERATIONS}) reached without convergence.")
+
+def isSquare(n: int) -> bool: 
+    """
+    Determines whether a whole number is a perfect square.
+
+    Args:
+        n (int): The number to check.
+
+    Returns:
+        bool: True if the number is a perfect square, False otherwise.
+
+    """
+
+    # Input validation
+    if not isinstance(n, int) or n < 0:
+        raise ValueError("n must be a non-negative integer.")
+
+    # Check if the square root of n is an integer and return the result
+    return integer_sqrt(n)**2 == n
 
 if __name__ == '__main__':
     import doctest
