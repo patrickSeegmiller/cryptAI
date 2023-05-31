@@ -1,7 +1,15 @@
-def absolute_value(n):
+def absolute_value(n: int or float) -> int or float:
     """
-    
+    Returns the absolute value of a number.
+
+    Args:
+        n (int or float): The number for which the absolute value is to be computed.
+
+    Returns:
+        int or float: The absolute value of the given number.
+
     """
+
     if n >= 0:
         return n
     else:
@@ -39,14 +47,8 @@ def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
 
 def greatest_common_divisor(a: int, b: int) -> int: # The Euclidean Algorithm
     """
-    Returns the greatest common divisor (GCD) of two non-negative integers, a and b.
-
-    The greatest common divisor of two non-negative integers, a and b, is the largest
-    integer that divides both a and b without leaving a remainder. The Euclidean Algorithm
-    is used to compute the GCD of two non-negative integers, by repeatedly applying the
-    following rule: if a > b, then the GCD of a and b is the same as the GCD of b and the
-    remainder of a divided by b. This process is repeated until the remainder is 0, at
-    which point the GCD is the last non-zero remainder.
+    Returns the greatest common divisor (GCD) of two non-negative integers, a and b
+    which is computed using the Euclidean Algorithm.
 
     Args:
         a (int): The first non-negative integer.
@@ -67,7 +69,7 @@ def greatest_common_divisor(a: int, b: int) -> int: # The Euclidean Algorithm
         a, b = b % a, a
     return b
 
-def integer_sqrt(N: int) -> int:
+def integer_sqrt(N: int or float) -> int:
     """
     Computes the integer square root of a non-negative integer.
 
@@ -83,7 +85,7 @@ def integer_sqrt(N: int) -> int:
 
     """
 
-    if not isinstance(N, int) or N < 0:
+    if not isinstance(N, int) or not isinstance(N, float) or N < 0:
         raise ValueError("N must be a non-negative integer.")
 
     MAX_ITERATIONS = 1000
@@ -97,8 +99,8 @@ def integer_sqrt(N: int) -> int:
             return new_guess
         guess = new_guess
 
-    print(f"Max iterations reached with approximate value of {new_guess}")
-    return new_guess
+    raise RuntimeError(f"Maximum number of iterations ({MAX_ITERATIONS}) reached without convergence.")
 
 if __name__ == '__main__':
-    
+    import doctest
+    doctest.testmod()
