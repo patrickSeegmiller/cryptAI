@@ -1,4 +1,5 @@
-from whole_number_operations import 
+from whole_number_operations import fast_powering_algorithm, integer_sqrt
+from prime_number_sieves import sieve_of_eratosthenes
 
 def trialDivisionPrimalityTest(n):
     """Determines whether n is a prime number by checking whether any integer in the interval
@@ -8,7 +9,7 @@ def trialDivisionPrimalityTest(n):
     :type n: int
     """
 
-    limit = int(math.sqrt(n))
+    limit = integer_sqrt(n)
     for i in range(2, limit):
         if n % i == 0:
             return False
@@ -28,7 +29,7 @@ def sixKPlusOneOptimizedPrimalityTest(n):
     if (n % 2 == 0) or (n % 3 == 0):
         return False
 
-    limit = int(math.sqrt(n))
+    limit = integer_sqrt(n)
     for i in range(5, limit+1, 6):
         if (n % i == 0) or (n % (i+2) == 0):
             return False
@@ -43,23 +44,37 @@ def primesOnlyPrimalityTest(n):
     :type n: int
     """
 
-    primesUpToSqrtN = sieve_of_eratosthenes(int(math.sqrt(n)))
+    primesUpToSqrtN = sieve_of_eratosthenes(integer_sqrt(n))
     for prime in primesUpToSqrtN:
         if n % prime == 0 :
             return False
     return True
 
-def fermatPrimalityTest(n):
-    """Detemines whether n is likely to be a prime number by determining whether an number in the
-    interval [1,n-1] is a witness for the compositeness of n using Fermat's Little Theorem. It is
-    important to note, however, that there are infinitely many values (called Carmichael Numbers)
-    for which this test fails
+def fermat_primality_test(n: int) -> bool:
+    """Determines whether n is likely to be a prime number using Fermat's Little Theorem.
 
-    :param n: The integer to test for primality.
-    :type n: int
+    Fermat's Little Theorem states that if n is a prime number and a is any positive integer
+    less than n, then a raised to the power of (n-1) is congruent to 1 modulo n. This test
+    checks whether a number in the interval [2, n-1] is a witness for the compositeness of n
+    using Fermat's Little Theorem. However, it is important to note that there are infinitely
+    many values (called Carmichael numbers) for which this test fails.
+
+    Args:
+        n (int): The integer to test for primality.
+
+    Returns:
+        bool: True if n is likely to be prime, False otherwise.
+
+    Raises:
+        ValueError: If n is not a positive integer greater than 1.
     """
+
+    # We first check that n is a positive integer greater than 1.
+    if not isinstance(n, int) or n <= 1:
+        raise ValueError("n should be a positive integer greater than 1.")
+
     for i in range(1,n):
-        if (fastPoweringAlgorithm(i, n, n) - i) % n != 0:
+        if (fast_powering_algorithm(i, n, n) - i) % n != 0:
             return False
     return True
 

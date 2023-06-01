@@ -121,7 +121,7 @@ def integer_sqrt(N: int or float) -> int:
     # If the maximum number of iterations is reached without convergence, raise an error
     raise RuntimeError(f"Maximum number of iterations ({MAX_ITERATIONS}) reached without convergence.")
 
-def isSquare(n: int) -> bool: 
+def is_square(n: int) -> bool: 
     """
     Determines whether a whole number is a perfect square.
 
@@ -139,6 +139,40 @@ def isSquare(n: int) -> bool:
 
     # Check if the square root of n is an integer and return the result
     return integer_sqrt(n)**2 == n
+
+def find_modular_inverse(a, m):
+    """
+    TODO: Docstring
+    """
+    if greatest_common_divisor(a,m) != 1: # If 'a' and 'm' are not relatively prime, 'a' has no modular inverse.
+        return None     
+
+    # We use the Extended Euclidean Algorithm to compute the multiplicative inverse of 'a' modulo 'm':
+    u1, u2, u3 = 1, 0, a
+    v1, v2, v3 = 0, 1, m
+    while v3 != 0:
+        q = u3 // v3    
+        v1, v2, v3, u1, u2, u3 = (u1 - q * v1), (u2 - q * v2), (u3 - q * v3), v1, v2, v3
+    return u1 % m
+
+def chinese_remainder_theorem(moduli, remainders):
+    """
+    TODO: Docstring
+    """
+    new_modulus = 1
+    x = 0
+    
+    for i in range(len(moduli)):
+        new_modulus *= moduli[i]
+        product = 1
+        for j in range(len(moduli)):
+            if i == j:
+                continue
+            product *= moduli[j]
+
+        x += remainders[i] * product * find_modular_inverse(product, moduli[i])
+            
+    return x % new_modulus
 
 if __name__ == '__main__':
     import doctest
