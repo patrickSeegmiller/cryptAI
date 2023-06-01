@@ -1,5 +1,5 @@
 
-def cf_expansion(num, denom):
+def continued_fraction_expansion(num: int, denom: int) -> list[int]:
     """
     cf_expansion takes the numerator and denominator of a positive rational number as parameters and returns its
     continued fraction expansion as a list.
@@ -26,20 +26,19 @@ def cf_expansion(num, denom):
         num, denom = denom, r
         i_part = num // denom
         r = num % denom
-
         result.append(i_part)
 
     return result
 
-def get_cf_convergents(cf):
+def get_continued_fraction_convergents(continued_fraction: list[int]) -> list[tuple[int, int]]:
     """
     TODO: Docstring
     """
-    h = [cf[0], cf[0]*cf[1]+1]
-    k = [1, cf[1]]
+    h = [continued_fraction[0], continued_fraction[0]*continued_fraction[1]+1]
+    k = [1, continued_fraction[1]]
     
-    for i in range(2, len(cf)):
-        h.append(cf[i] * h[i-1] + h[i-2])
-        k.append(cf[i] * k[i-1] + k[i-2])
+    for i in range(2, len(continued_fraction)):
+        h.append(continued_fraction[i] * h[i-1] + h[i-2])
+        k.append(continued_fraction[i] * k[i-1] + k[i-2])
 
     return list(zip(h,k))
