@@ -181,7 +181,6 @@ def miller_rabin_get_prime(lower_limit: int = 2**1024, upper_limit: int = 2**102
     if lower_limit > upper_limit:
         raise ValueError("Lower limit should be less than or equal to the upper limit.")
 
-
     # Initialize the maximum number of iterations``
     MAX_ITERATIONS = 10000
 
@@ -194,5 +193,6 @@ def miller_rabin_get_prime(lower_limit: int = 2**1024, upper_limit: int = 2**102
             return n
         n = random.randint(lower_limit,upper_limit)
 
+    # If we reach this point, we have not found a probable prime
     print(f"Maximum number of iterations {MAX_ITERATIONS} reached without locating a probable prime.")
 

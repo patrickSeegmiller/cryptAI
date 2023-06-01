@@ -1,4 +1,22 @@
-from whole_number_operations import fast_powering_algorithm, integer_sqrt, is_square
+from whole_number_operations import fast_powering_algorithm, integer_sqrt, is_square, integer_nthrt, find_modular_inverse, greatest_common_divisor, absolute_value
+from rational_number_operations import get_cf_convergents, cf_expansion
+
+def continued_fraction_factorization(e, N):
+    """
+    TODO: Docstring
+    """
+
+    convergents = get_cf_convergents(cf_expansion(e, N))
+
+    for num, denom in convergents:
+        if num == 0:
+            continue
+        p, q = integer_quadratic_formula(1, ((e*denom - 1) // num) - N - 1, N)
+        if (p != None) and (q!= None):
+            if (p * q) == N:
+                return [p, q]
+
+    return None
 
 def fermat_factorization(n: int) -> list[int]:
     '''
@@ -42,3 +60,50 @@ def fermat_factorization(n: int) -> list[int]:
 
     # We return the factors of n.
     return [a - integer_sqrt(b_squared), a + integer_sqrt(b_squared)]
+
+def known_decryption_key_factorization(decryption_key, public_exponent, modulus):
+    """
+    TODO: Docstring
+    """
+    k = d*e - 1
+    factors_of_two = 0
+    while k % 2 == 0:
+        factors_of_two += 1
+        k = k // 2
+
+def pollard_p_minus_one_factorization(N):
+    """
+    TODO: Docstring
+    """
+    UPPER_BOUND = 1000000
+
+    a = 2 #Other choices of 'a' can be used here.
+    for i in range(2, UPPER_BOUND):
+        a = fast_powering_algorithm(a, i, N)
+        d = greatest_common_divisor(a - 1, N)
+        if 1 < d and d < N:
+            print(f"Pollard's p - 1 Factorization Algorithm factored {N}: ", end="")
+            return [d, N // d]
+
+    print(f"Pollard's p - 1 Factorization Algorithm did not succeed in finding a non trivial factor of {N} with an upper bound of {UPPER_BOUND}.")
+    return None
+
+def pollard_rho_factorization(N):
+    """
+    TODO: Docstring
+    """
+    MAX_ITERATIONS = 1000000
+    
+    x = 1 #Other choices of 'x' and 'y' can be used here.
+    y = 2
+    g = greatest_common_divisor(absolute_value(y - x), N)
+    for i in range(MAX_ITERATIONS):
+        x = (x**2 + 1) % N
+        y = (y**2 + 1) % N
+        y = (y**2 + 1) % N
+        g = greatest_common_divisor(absolute_value(y - x), N)
+        if g > 1 and g < N:
+            return [g, N // g] 
+            
+    print(f"The maximum number of iterations has been reached without finding any nontrivial factors of {N}.") 
+  
