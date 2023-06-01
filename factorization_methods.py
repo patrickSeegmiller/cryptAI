@@ -71,6 +71,8 @@ def known_decryption_key_factorization(decryption_key, public_exponent, modulus)
         factors_of_two += 1
         k = k // 2
 
+    
+
 def pollard_p_minus_one_factorization(N):
     """
     TODO: Docstring
@@ -110,9 +112,13 @@ def pollard_rho_factorization(N):
 
 def rational_sieve(N, B):
     """
-
+    TODO: Docstring
     """
     factor_base = get_factor_base(B)
+
+    # Check for divisibility by the primes in the factor base.
     for factor in factor_base:
         if N % factor == 0:
             return [factor, N // factor]
+        
+    # TODO: Implement the rest of the algorithm
