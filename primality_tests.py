@@ -175,19 +175,19 @@ def miller_rabin_witness_for_compositeness(n: int, potential_witness: int) -> bo
     if (n % 2 == 0) or (greatest_common_divisor(n, potentialWitness) != 1):
         return True # n is composite
 
-    # Now we break the value n-1 into 2^k times an odd number called oddPart
+    # Now we break the value n-1 into 2^k times an odd number called odd_part
     # by repeatedly dividing by 2 until the result is odd. 
     k = 0
-    oddPart = n-1 # oddPart is initialized to n-1
-    # We divide oddPart by 2 until it is odd, incrementing k each time
-    while oddPart % 2 == 0:
+    odd_part = n-1 # odd_part is initialized to n-1
+    # We divide odd_part by 2 until it is odd, incrementing k each time
+    while odd_part % 2 == 0:
         k += 1
-        oddPart = oddPart // 2
+        odd_part = odd_part // 2
 
     # Check whether the qth power of the potential witness is congruent to 1 modulo n.
     # If it is, the test fails, meaning n -might- be prime. The Fast Powering
     # Algorithm is applied to simplify the computation
-    potentialWitness = fast_powering_algorithm(potentialWitness,oddPart,n)   
+    potentialWitness = fast_powering_algorithm(potentialWitness,odd_part,n)   
     if (potentialWitness - 1) % n == 0:
         return False # n may be prime
 
