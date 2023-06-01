@@ -1,21 +1,37 @@
 from whole_number_operations import fast_powering_algorithm, integer_sqrt
 from prime_number_sieves import sieve_of_eratosthenes
 
-def trialDivisionPrimalityTest(n):
-    """Determines whether n is a prime number by checking whether any integer in the interval
-    [2, int(sqrt(n))] is a divisor of n.
+def trial_division_primality_test(n: int) -> bool:
+    """
+    Determines whether n is a prime number by checking whether any integer in the interval
+    [2, integer_sqrt(n)] is a divisor of n.
 
-    :param n: The integer to test for primality.
-    :type n: int
+    Args:
+        n (int): The integer to test for primality.
+
+    Returns:
+        bool: True if n is prime, False otherwise.
     """
 
+    # Input validation
+    if not isinstance(n, int) or n <= 1:
+        raise ValueError("n must be a positive integer greater than 1.")
+
+    # We first check that n is a positive integer greater than 1.
+    # If n is 2 or 3, we return True.
+    if n <= 3:
+        return n > 1
+
+    # If n > 3, we check whether any integer in the interval [2, integer_sqrt(n)] is a divisor of n.
     limit = integer_sqrt(n)
     for i in range(2, limit):
         if n % i == 0:
             return False
+        
+    # If no integer in the interval [2, integer_sqrt(n)] is a divisor of n, we return True.
     return True
 
-def sixKPlusOneOptimizedPrimalityTest(n):
+def six_k_plus_one_optimized_primality_test(n):
     """Determines whether n is a prime number by first checking whether n is divisible by 2 or
     3, and then checking any integer of the form 6k+-1 in the interval [5, int(sqrt(n))] is a
     divisor of n (where k is a whole number). This works since any prime number other than 2
