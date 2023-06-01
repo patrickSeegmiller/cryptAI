@@ -133,7 +133,8 @@ def miller_rabin_primality_test(n, num_potential_witnesses = 100, percent_certai
         number_of_potential_witnesses (int, optional): The number of integers to check as 
         potential witnesses to the compositeness of `n`. Defaults to 100.
         percent_certain (float, optional): How certain the user wants to be that `n` is prime 
-        as a decimal on the interval [0, 1). Defaults to 0.99.
+        as a decimal on the interval [0, 1). Defaults to None (which ends up being equivalent 
+        0.99 to).
 
     Returns:
         bool: True if `n` is likely to be prime, False otherwise.

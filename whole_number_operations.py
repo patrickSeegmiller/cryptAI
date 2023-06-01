@@ -56,6 +56,13 @@ def chinese_remainder_theorem(moduli: list[int], remainders=list[int]) -> int:
             
     return x % new_modulus
 
+def euler_criterion(n: int, p: int) -> bool:
+    """
+    TODO: Docstring
+    """
+
+    # TODO: Implement this function
+
 def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
     """
     Compute the value of `base`^`exponent` modulo `modulus` using the fast powering algorithm.
@@ -91,10 +98,13 @@ def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
     # Return the result 
     return value
 
-def find_B_smooth_numbers(lower_limit, upper_limit, B):
+def get_B_smooth_numbers(lower_limit, upper_limit, B):
+    """
+    TODO: Docstring
     """
 
-    """
+
+
     return
 
 def find_modular_inverse(a, m):
@@ -232,6 +242,20 @@ def integer_quadratic_formula(a, b, c):
     # Finally, we compute the roots of the quadratic equation
     return [(-b + integer_sqrt(b * b - 4 * a *c))//(2 * a), (-b - integer_sqrt(b * b - 4 * a *c))//(2 * a)]
 
+def is_b_smooth(n: int, B: int) -> bool:
+    """
+    TODO: Docstring
+    """
+
+    # TODO: Implement this function
+
+def is_quadratic_residue(a: int, p: int) -> bool:
+    """
+    TODO: Docstring
+    """
+
+    # TODO: Implement this function
+
 def is_square(n: int) -> bool: 
     """
     Determines whether a whole number is a perfect square.
@@ -250,6 +274,20 @@ def is_square(n: int) -> bool:
 
     # Check if the square root of n is an integer and return the result
     return integer_sqrt(n)**2 == n
+
+def legendre_symbol(a: int, p: int) -> int:
+    """
+    TODO: Docstring
+    """
+
+    # TODO: Implement this function
+
+def tonelli_shanks(N: int, p: int) -> int:
+    """
+    TODO: Docstring
+    """
+
+    #TODO: Implement this function
 
 if __name__ == '__main__':
     import doctest
