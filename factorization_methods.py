@@ -1,4 +1,4 @@
-from whole_number_operations import fast_powering_algorithm, integer_sqrt, is_square, integer_nthrt, find_modular_inverse, greatest_common_divisor, absolute_value
+from whole_number_operations import fast_powering_algorithm, integer_sqrt, is_square, integer_nthrt, find_modular_inverse, greatest_common_divisor, absolute_value, integer_quadratic_formula, get_factor_base
 from rational_number_operations import get_cf_convergents, cf_expansion
 
 def continued_fraction_factorization(e, N):
@@ -65,7 +65,7 @@ def known_decryption_key_factorization(decryption_key, public_exponent, modulus)
     """
     TODO: Docstring
     """
-    k = d*e - 1
+    k = decryption_key * public_exponent - 1
     factors_of_two = 0
     while k % 2 == 0:
         factors_of_two += 1
@@ -104,6 +104,15 @@ def pollard_rho_factorization(N):
         g = greatest_common_divisor(absolute_value(y - x), N)
         if g > 1 and g < N:
             return [g, N // g] 
-            
-    print(f"The maximum number of iterations has been reached without finding any nontrivial factors of {N}.") 
-  
+
+    # Raise an exception if the maximum number of iterations has been reached without finding a nontrivial factor of N.
+    raise Exception(f"The maximum number of iterations has been reached without finding any nontrivial factors of {N}.")
+
+def rational_sieve(N, B):
+    """
+
+    """
+    factor_base = get_factor_base(B)
+    for factor in factor_base:
+        if N % factor == 0:
+            return [factor, N // factor]

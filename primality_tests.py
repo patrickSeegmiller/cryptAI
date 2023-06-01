@@ -1,4 +1,6 @@
-from whole_number_operations import fast_powering_algorithm, integer_sqrt
+from random import randint
+
+from whole_number_operations import fast_powering_algorithm, integer_sqrt, greatest_common_divisor
 from prime_number_sieves import sieve_of_eratosthenes
 
 def trial_division_primality_test(n: int) -> bool:
@@ -31,39 +33,66 @@ def trial_division_primality_test(n: int) -> bool:
     # If no integer in the interval [2, integer_sqrt(n)] is a divisor of n, we return True.
     return True
 
-def six_k_plus_one_optimized_primality_test(n):
-    """Determines whether n is a prime number by first checking whether n is divisible by 2 or
-    3, and then checking any integer of the form 6k+-1 in the interval [5, int(sqrt(n))] is a
+def sixk_plus_one_primality_test(n: int) -> bool:
+    """
+    Determines whether n is a prime number by first checking whether n is divisible by 2 or
+    3, and then checking any integer of the form 6k+-1 in the interval [5, integer_sqrt(n)] is a
     divisor of n (where k is a whole number). This works since any prime number other than 2
     and 3 can be written as 6k+1 or 6k-1, where k is a whole number.
 
-    :param n: The integer to test for primality.
-    :type n: int
+    Args:
+        n (int): The integer to test for primality.
+
+    Returns:
+        bool: True if n is prime, False otherwise.
     """
+
+    # Input validation
+    if not isinstance(n, int) or n <= 1:
+        raise ValueError("n must be a positive integer greater than 1.")
+
+    # First, we check if n equals 2 or 3, or if n is divisible by 2 or 3.
     if n <= 3:
         return n > 1
     if (n % 2 == 0) or (n % 3 == 0):
         return False
 
+    # If n is not divisible by 2 or 3, we check whether any integer of the form 6k+-1 in the interval
+    # [5, integer_sqrt(n)] is a divisor of n.
     limit = integer_sqrt(n)
     for i in range(5, limit+1, 6):
         if (n % i == 0) or (n % (i+2) == 0):
             return False
     return True
 
-def primesOnlyPrimalityTest(n):
-    """Determines whether n is a prime number by checking whether any prime number in the interval
-    [2, int(sqrt(n))] is a divisor of n. The list of prime numbers is first obtained by way of the
-    Sieve of Eratosthenes with upper limit equal to int(sqrt(n)).
+def primes_only_primality_test(n: int) -> bool:
+    """
+    Determines whether n is a prime number by checking whether any prime number in the interval
+    [2, integer_sqrt(n)] is a divisor of n. The list of prime numbers is first obtained by way of the
+    Sieve of Eratosthenes with an upper limit equal to integer_sqrt(n).
 
-    :param n: The integer to test for primality.
-    :type n: int
+    Args:
+        n (int): The integer to test for primality.
+
+    Returns:
+        bool: True if n is prime, False otherwise.
     """
 
-    primesUpToSqrtN = sieve_of_eratosthenes(integer_sqrt(n))
-    for prime in primesUpToSqrtN:
-        if n % prime == 0 :
+    # Input validation
+    if not isinstance(n, int) or n <= 1:
+        raise ValueError("n must be a positive integer greater than 1.")
+    
+    # If n is 2 or 3, we return True.
+    if n <= 3:
+        return n > 1
+
+    # If n > 3, we check whether any prime number in the interval [2, integer_sqrt(n)] is a divisor of n.
+    primes_up_to_sqrt_n = sieve_of_eratosthenes(integer_sqrt(n))
+    for prime in primes_up_to_sqrt_n:
+        if n % prime == 0:
             return False
+        
+    # If no prime number in the interval [2, integer_sqrt(n)] is a divisor of n, we return True.
     return True
 
 def fermat_primality_test(n: int) -> bool:
@@ -89,6 +118,7 @@ def fermat_primality_test(n: int) -> bool:
     if not isinstance(n, int) or n <= 1:
         raise ValueError("n should be a positive integer greater than 1.")
 
+    # We then check whether any number in the interval [2, n-1] is a Fermat witness for the compositeness of n
     for i in range(1,n):
         if (fast_powering_algorithm(i, n, n) - i) % n != 0:
             return False
@@ -116,7 +146,7 @@ def miller_rabin_primality_test(n, num_potential_witnesses = 100, percent_certai
 
     # We randomly select integers in the interval [2,n) that we will use as potential witnesses
     # for the compositeness of n.
-    potentialWitnesses = [random.randint(2,n) for i in range(num_potential_witnesses)]
+    potentialWitnesses = [randint(2,n) for i in range(num_potential_witnesses)]
 
     # Lastly, we iterate through each potential witness, checking each with the
     # miller_rabin_witness_for_compositeness function.
@@ -141,7 +171,7 @@ def miller_rabin_witness_for_compositeness(n: int, potential_witness: int) -> bo
     """
 
     # First we check whether n is even or shares a nontrivial factor with the potentialWitness.
-    if (n % 2 == 0) or (math.gcd(n, potentialWitness) != 1):
+    if (n % 2 == 0) or (greatest_common_divisor(n, potentialWitness) != 1):
         return True # n is composite
 
     # Now we break the value n-1 into 2^k times an odd number called oddPart
@@ -201,14 +231,13 @@ def miller_rabin_get_prime(lower_limit: int = 2**1024, upper_limit: int = 2**102
     MAX_ITERATIONS = 10000
 
     # Generate a random number in the specified range
-    n = random.randint(lower_limit, upper_limit)
+    n = randint(lower_limit, upper_limit)
 
     # Iterate through the range until a probable prime is found
     for i in range(MAX_ITERATIONS):
         if miller_rabin_primality_test(n):
             return n
-        n = random.randint(lower_limit,upper_limit)
+        n = randint(lower_limit,upper_limit)
 
-    # If we reach this point, we have not found a probable prime
-    print(f"Maximum number of iterations {MAX_ITERATIONS} reached without locating a probable prime.")
-
+    # Raise a RuntimeError if we reach this point without finding a probable prime
+    raise RuntimeError(f"Maximum number of iterations {MAX_ITERATIONS} reached without locating a probable prime.")

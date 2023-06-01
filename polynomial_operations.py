@@ -46,7 +46,7 @@ def synthetic_division(polynomial_coefficients: list[float], constant_term: floa
     # First, check that the input is valid by checking that polynomial_coefficients is a list of integers.
     if not isinstance(polynomial_coefficients, list) or not all(isinstance(coeff, int) for coeff in polynomial_coefficients):
         raise ValueError("Polynomial coefficients must be a list of integers or floats.")
-    if not isinstance(constant_term, int)):
+    if not isinstance(constant_term, int):
         raise ValueError("Constant term must be an integer or float.")
     
     # Perform synthetic division
