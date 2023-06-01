@@ -28,6 +28,24 @@ def sieve_of_eratosthenes(N: int) -> list[int]:
     # which were set to True by default.
     return [index for index, prime in enumerate(is_prime) if prime and index > 1]
 
+def sieve_of_sundaram(N: int) -> list[int]:
+    '''Generates a list of prime numbers up less than N using the Sieve of
+    Sundaram algorithm.
+    
+    Args:
+        N (int): The limit up to which prime numbers should be generated.
+        
+    Returns:
+        list: A list of prime numbers up to N.
+    '''
+
+    #Input validation
+    if N < 2 or not isinstance(N, int):
+        raise ValueError("N must be an integer greater than 1.")
+    
+    #TODO: Implement Sieve of Sundaram algorithm
+    return []
+
 if __name__ == '__main__':
     # Default input if no command-line argument is provided
     default_limit = 100

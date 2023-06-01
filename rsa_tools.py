@@ -1,5 +1,7 @@
+from random import randint
+
 from primality_tests import miller_rabin_get_prime
-from whole_number_operations import integer_sqrt
+from whole_number_operations import integer_sqrt, find_modular_inverse
 
 def hex_string_to_base_ten_integer(hex_value):
     """
@@ -44,11 +46,24 @@ def generate_rsa_public_key(number_of_bits: int = 1024, public_exponent: int = 6
     N = p * q
     return [public_exponent, N]
 
-def generate_bad_rsa_public_key(bad_primes=False, weak_decryption_key=False, really_bad_modulus=False, number_of_bits=1024):
+def generate_bad_rsa_public_key(weak_primes=False, weak_decryption_key=False, weak_modulus=False, number_of_bits=1024):
     """
     TODO: Docstring
     """
 
+    # First, check whether the input is valid
+    if not isinstance(number_of_bits, int) or number_of_bits < 2:
+        raise ValueError("number_of_bits must be a positive integer greater than 1.")
+    if not isinstance(weak_primes, bool) or not isinstance(weak_decryption_key, bool) or not isinstance(weak_modulus, bool):
+        raise ValueError("weak_primes, weak_decryption_key, and weak_modulus must be boolean values.")
+
+    # Generate a weak RSA public key if requested. The key is weak if any of the following are true:
+    # 1. The primes are weak (i.e., the primes are too close together, making them vulnerable to a Fermat factorization attack)
+    # 2. The decryption key is weak (i.e., it is too small, making it vulnerable to a continued fraction attack)
+    # 3. The modulus is weak (i.e., they are too small, making them vulnerable to a brute force attack)
+    if weak_primes:
+        p = miller_rabin_get_prime(2 ** (number_of_bits - 1), 2 ** (number_of_bits))
+        q = miller_rabin_get_prime(p, p + 1000000000)
     if weak_decryption_key:
         p = miller_rabin_get_prime(2 ** (number_of_bits - 1), 2 ** (number_of_bits))
         q = p
@@ -58,15 +73,10 @@ def generate_bad_rsa_public_key(bad_primes=False, weak_decryption_key=False, rea
         d = miller_rabin_get_prime(2, integer_sqrt(integer_sqrt(p*q)) // 4 - 1)
         e = find_modular_inverse(d, (p-1)*(q-1))
     else:
-        e = 65537
-
-    if really_bad_modulus:
-        p = random.randint(2, 2**(number_of_bits))
-        q = random.randint(2, 2**(number_of_bits))
+        e = 65537 # This is the standard value for the public exponent
+    if weak_modulus:
+        p = randint(2, 2**(number_of_bits))
+        q = randint(2, 2**(number_of_bits))
         return [e, p*q]
-    
-    if bad_primes:
-        p = miller_rabin_get_prime(2 ** (number_of_bits - 1), 2 ** (number_of_bits))
-        q = miller_rabin_get_prime(p, p + 1000000000)
             
     return [e, p * q]

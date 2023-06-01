@@ -1,3 +1,5 @@
+from prime_number_sieves import sieve_of_eratosthenes
+
 def absolute_value(n: int or float) -> int or float:
     """
     Returns the absolute value of a number.
@@ -89,6 +91,12 @@ def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
     # Return the result 
     return value
 
+def find_B_smooth_numbers(lower_limit, upper_limit, B):
+    """
+
+    """
+    return
+
 def find_modular_inverse(a, m):
     """
     TODO: Docstring
@@ -103,6 +111,16 @@ def find_modular_inverse(a, m):
         q = u3 // v3    
         v1, v2, v3, u1, u2, u3 = (u1 - q * v1), (u2 - q * v2), (u3 - q * v3), v1, v2, v3
     return u1 % m 
+
+def get_factor_base(B):
+    """
+    This function returns a factor base with elements less than B. A factor base is just a small list of prime factors
+    that you will use to build congruence relationships in order to generate multiple congruences of square integers. These,
+    in turn, are used to factor a large number.
+
+    param B:
+    """
+    return sieve_of_eratosthenes(B)
 
 def greatest_common_divisor(a: int, b: int) -> int: # The Euclidean Algorithm
     """
