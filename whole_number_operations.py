@@ -13,6 +13,9 @@ def absolute_value(n: int or float) -> int or float:
     Raises:
         ValueError: If `n` is not an integer or a float.
 
+    References:
+        https://en.wikipedia.org/wiki/Absolute_value
+
     """
 
     # Input validation
@@ -44,6 +47,9 @@ def chinese_remainder_theorem(moduli: list[int], remainders=list[int]) -> int:
         ValueError: If `moduli` and `remainders` are not lists of the same length, or if `moduli` contains
         a non-positive integer, or if `remainders` contains a negative integer or a non-integer greater than
         or equal to the corresponding modulus.
+
+    References:
+        https://en.wikipedia.org/wiki/Chinese_remainder_theorem
 
     """
 
@@ -80,10 +86,38 @@ def chinese_remainder_theorem(moduli: list[int], remainders=list[int]) -> int:
 
 def euler_criterion(n: int, p: int) -> bool:
     """
-    TODO: Docstring
+    Applies Euler's criterion to determine whether n is a quadratic residue modulo p.
+
+    Args:
+        n (int): The number for which we want to determine whether it is a quadratic residue modulo p.
+        p (int): The modulus.
+
+    Returns:
+        bool: True if n is a quadratic residue modulo p, False otherwise.
+
+    Raises:
+        ValueError: If `n` or `p` is not a positive integer.
+
+    References:
+        https://en.wikipedia.org/wiki/Euler%27s_criterion
+
     """
 
-    # TODO: Implement this function
+    # Check that the input is valid by checking that n and p are positive integers, and by verifying that
+    # n and p are relatively prime.
+    if not isinstance(n, int) or not isinstance(p, int) or n < 1 or p < 1:
+        raise ValueError("n and p must be positive integers.")
+    if greatest_common_divisor(n, p) != 1:
+        raise ValueError("n and p must be relatively prime.")
+    
+    # Compute the value of n^((p-1)/2) modulo p
+    value = fast_powering_algorithm(n, (p-1)//2, p)
+
+    # Return True if the value is congruent to 1 modulo p, False if it is congruent to -1 modulo p
+    if value == 1:
+        return True
+    else:
+        return False
 
 def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
     """
@@ -124,32 +158,6 @@ def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
     # Return the result 
     return value
 
-def get_B_smooth_numbers(lower_limit, upper_limit, smoothness_level):
-    """
-    get_B_smooth_numbers returns a list of all B-smooth numbers in the range [lower_limit, upper_limit].
-
-    Args:
-        lower_limit (int): The lower limit of the range.
-        upper_limit (int): The upper limit of the range.
-        smoothness_level (int): The smoothness level.
-
-    Returns:
-        list[int]: A list of all B-smooth numbers in the range [lower_limit, upper_limit].
-
-    Raises:
-        ValueError: If `lower_limit`, `upper_limit`, or `smoothness_level` is not a positive integer.
-
-    """
-
-    # Check that the input is valid by checking that lower_limit, upper_limit, and smoothness_level are positive integers
-    if not isinstance(lower_limit, int) or not isinstance(upper_limit, int) or not isinstance(smoothness_level, int) or lower_limit < 1 or upper_limit < 1 or smoothness_level < 1:
-        raise ValueError("lower_limit, upper_limit, and smoothness_level must be positive integers.")
-
-    # Get the factor base to be used
-    factor_base = get_factor_base(upper_limit)
-
-    return
-
 def find_modular_inverse(a, m):
     """
     This function returns the multiplicative inverse of 'a' modulo 'm'. If 'a' and 'm' are not relatively prime,
@@ -183,6 +191,32 @@ def find_modular_inverse(a, m):
         q = u3 // v3    
         v1, v2, v3, u1, u2, u3 = (u1 - q * v1), (u2 - q * v2), (u3 - q * v3), v1, v2, v3
     return u1 % m 
+
+def get_B_smooth_numbers(lower_limit, upper_limit, smoothness_level):
+    """
+    get_B_smooth_numbers returns a list of all B-smooth numbers in the range [lower_limit, upper_limit].
+
+    Args:
+        lower_limit (int): The lower limit of the range.
+        upper_limit (int): The upper limit of the range.
+        smoothness_level (int): The smoothness level.
+
+    Returns:
+        list[int]: A list of all B-smooth numbers in the range [lower_limit, upper_limit].
+
+    Raises:
+        ValueError: If `lower_limit`, `upper_limit`, or `smoothness_level` is not a positive integer.
+
+    """
+
+    # Check that the input is valid by checking that lower_limit, upper_limit, and smoothness_level are positive integers
+    if not isinstance(lower_limit, int) or not isinstance(upper_limit, int) or not isinstance(smoothness_level, int) or lower_limit < 1 or upper_limit < 1 or smoothness_level < 1:
+        raise ValueError("lower_limit, upper_limit, and smoothness_level must be positive integers.")
+
+    # Get the factor base to be used
+    factor_base = get_factor_base(upper_limit)
+
+    return
 
 def get_factor_base(B, sieve='eratosthenes'):
     """
@@ -282,8 +316,26 @@ def integer_sqrt(N: int or float) -> int:
 
 def integer_nthrt(n: int, index: int) -> int:
     """
-    TODO: Docstring
+    Computes the integer nth root of a non-negative integer using a binary search.
+
+    Args:
+        n (int): The non-negative integer for which the nth root is to be computed.
+        index (int): The index of the root.
+
+    Returns:
+        int: The integer nth root of the given n.
+
+    Raises:
+        ValueError: If the n is negative or not an integer.
+        ValueError: If the index is not a positive integer.
+
     """
+
+    # Check that the input is valid by checking that n is a non-negative integer and index is a positive integer
+    if not isinstance(n, int) or not isinstance(index, int) or n < 0 or index < 1:
+        raise ValueError("n must be a non-negative integer and index must be a positive integer.")
+    
+    # Check edge case of n = 0
     if n == 0:
         return 0
 
@@ -310,7 +362,20 @@ def integer_nthrt(n: int, index: int) -> int:
     
 def integer_quadratic_formula(a, b, c):
     """
-    TODO: Docstring
+    Computes the integer approximate roots of a quadratic equation of the form ax^2 + bx + c = 0.
+
+    Args:
+        a (int): The coefficient of the quadratic term.
+        b (int): The coefficient of the linear term.
+        c (int): The constant term.
+
+    Returns:
+        list[int]: The integer approximate roots of the quadratic equation.
+
+    Raises:
+        ValueError: If a, b, or c is not an integer or if a is zero.
+        ValueError: If the discriminant is negative.
+
     """
     
     # First, we check that the input values are valid
@@ -331,10 +396,48 @@ def is_b_smooth(n: int, B: int) -> bool:
 
     # TODO: Implement this function
 
+def is_nth_root(n: int, index: int) -> bool:
+    """
+    Determines whether a whole number is an nth power.
+
+    Args:
+        n (int): The number to check.
+        index (int): The index of the root.
+
+    Returns:
+        bool: True if the number is an nth power, False otherwise.
+
+    Raises:
+        ValueError: If n is not a positive integer.
+        ValueError: If index is not a positive integer.
+
+    """
+
+    # Check that n and index are positive integers
+    if not isinstance(n, int) or not isinstance(index, int) or n < 0 or index < 0:
+        raise ValueError("n and index must be positive integers.")
+    
+    # TODO: Implement this function
+
 def is_quadratic_residue(a: int, p: int) -> bool:
     """
-    TODO: Docstring
+    Determines whether a number is a quadratic residue modulo a prime number.
+
+    Args:
+        a (int): The number to check.
+        p (int): The prime number.
+
+    Returns:
+        bool: True if a is a quadratic residue modulo p, False otherwise.
+
+    Raises:
+        ValueError: If a or p is not a positive integer.
+
     """
+
+    # Check that a and p are positive integers
+    if not isinstance(a, int) or not isinstance(p, int) or a < 0 or p < 0:
+        raise ValueError("a and p must be positive integers.")
 
     # TODO: Implement this function
 
@@ -348,9 +451,12 @@ def is_square(n: int) -> bool:
     Returns:
         bool: True if the number is a perfect square, False otherwise.
 
+    Raises:
+        ValueError: If n is not a non-negative integer.
+
     """
 
-    # Input validation
+    # Check that n is a non-negative integer
     if not isinstance(n, int) or n < 0:
         raise ValueError("n must be a non-negative integer.")
 
@@ -359,10 +465,44 @@ def is_square(n: int) -> bool:
 
 def legendre_symbol(a: int, p: int) -> int:
     """
-    TODO: Docstring
+    Computes the Legendre symbol (a/p), which is defined as by the following: 
+        (a/p) = 0 if p divides a
+        (a/p) = 1 if a is a quadratic residue modulo p
+        (a/p) = -1 if a is not a quadratic residue modulo p
+
+    Args:
+        a (int): The number for which the Legendre symbol is to be computed.
+        p (int): The prime number.
+
+    Returns:
+        int: The value of the Legendre symbol (a/p).
+
+    Raises:
+        ValueError: If a or p is not a positive integer.
+
     """
 
     # TODO: Implement this function
+
+def legendre_symbols(a: int, p: int) -> list[int]:
+    """
+    Computes the Legendre symbols (a/p) for all primes p up to a given prime number.
+
+    Args:
+        a (int): The number for which the Legendre symbols are to be computed.
+        p (int): The prime number.
+
+    Returns:
+        list[int]: The values of the Legendre symbols (a/p) for all primes p up to a given prime number.
+
+    Raises:
+        ValueError: If a or p is not a positive integer.
+
+    
+    """
+
+    # TODO: Implement this function
+
 
 def tonelli_shanks(N: int, p: int) -> int:
     """

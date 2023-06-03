@@ -1,5 +1,6 @@
 from whole_number_operations import fast_powering_algorithm, integer_sqrt, is_square, integer_nthrt, find_modular_inverse, greatest_common_divisor, absolute_value, integer_quadratic_formula, get_factor_base
 from rational_number_operations import get_cf_convergents, cf_expansion
+from primality_tests import miller_rabin_primality_test
 
 def continued_fraction_factorization(e, N):
     """
@@ -65,6 +66,7 @@ def known_decryption_key_factorization(decryption_key, public_exponent, modulus)
     """
     TODO: Docstring
     """
+
     k = decryption_key * public_exponent - 1
     factors_of_two = 0
     while k % 2 == 0:
@@ -73,13 +75,30 @@ def known_decryption_key_factorization(decryption_key, public_exponent, modulus)
 
     
 
-def pollard_p_minus_one_factorization(N):
+def pollard_p_minus_one_factorization(N: int, a=2) -> list[int]:
     """
-    TODO: Docstring
+    Factorizes a composite number N using Pollard's p - 1 Factorization Algorithm. Pollard's 
+
+    Args:
+        N (int): The number to be factorized.
+        a (int, optional): The base to be used in the factorization algorithm. Defaults to 2.
+
+    Returns:
+        list[int]: A list containing two nontrivial factors of N.
+
+    Raises:
+        ValueError: If N is a probable prime, which is checked by using the Miller-Rabin primality test.
+
     """
+
+    # Check whether N is a probable prime.
+    if miller_rabin_primality_test(N):
+        raise ValueError(f"{N} is a probable prime, so it (almost certainly) cannot be factorized.")
+   
+    # Set the upper bound for the exponent in the factorization algorithm.
     UPPER_BOUND = 1000000
 
-    a = 2 #Other choices of 'a' can be used here.
+    # Perform the factorization algorithm.
     for i in range(2, UPPER_BOUND):
         a = fast_powering_algorithm(a, i, N)
         d = greatest_common_divisor(a - 1, N)
@@ -90,14 +109,30 @@ def pollard_p_minus_one_factorization(N):
     print(f"Pollard's p - 1 Factorization Algorithm did not succeed in finding a non trivial factor of {N} with an upper bound of {UPPER_BOUND}.")
     return None
 
-def pollard_rho_factorization(N):
+def pollard_rho_factorization(N: int, x=1, y=2) -> list[int]:
     """
-    TODO: Docstring
+    Uses Pollard's rho factorization algorithm to factor a composite number N
+
+    Args:
+        N (int): The number to be factorized.
+        x (int, optional): The initial value of x. Defaults to 1.
+        y (int, optional): The initial value of y. Defaults to 2.
+
+    Returns:
+        list[int]: A list containing two nontrivial factors of N.
+
+    Raises:
+        ValueError: If N is a probable prime, which is checked by using the Miller-Rabin primality test.
+        Exception: If the maximum number of iterations has been reached without finding a nontrivial factor of N.
+
     """
+
+    # Check whether N is a probable prime.
+    if miller_rabin_primality_test(N):
+        raise ValueError(f"{N} is a probable prime, so it (almost certainly) cannot be factorized.")
+
     MAX_ITERATIONS = 1000000
-    
-    x = 1 #Other choices of 'x' and 'y' can be used here.
-    y = 2
+
     g = greatest_common_divisor(absolute_value(y - x), N)
     for i in range(MAX_ITERATIONS):
         x = (x**2 + 1) % N
@@ -109,6 +144,13 @@ def pollard_rho_factorization(N):
 
     # Raise an exception if the maximum number of iterations has been reached without finding a nontrivial factor of N.
     raise Exception(f"The maximum number of iterations has been reached without finding any nontrivial factors of {N}.")
+
+def quadratic_sieve(N, B):
+    """
+    TODO: Docstring
+    """
+
+    #TODO: Implement the algorithm
 
 def rational_sieve(N, B):
     """
@@ -122,3 +164,10 @@ def rational_sieve(N, B):
             return [factor, N // factor]
         
     # TODO: Implement the rest of the algorithm
+
+def shanks_square_forms_factorization(N):
+    """
+    TODO: Docstring
+    """
+
+    # TODO: Implement the algorithm
