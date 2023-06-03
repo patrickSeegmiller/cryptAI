@@ -1,4 +1,4 @@
-from prime_number_sieves import sieve_of_eratosthenes
+from prime_number_sieves import sieve_of_eratosthenes, sieve_of_sundaram, sieve_of_atkin
 
 def absolute_value(n: int or float) -> int or float:
     """
@@ -75,6 +75,7 @@ def chinese_remainder_theorem(moduli: list[int], remainders=list[int]) -> int:
 
         x += remainders[i] * product * find_modular_inverse(product, moduli[i])
             
+    
     return x % new_modulus
 
 def euler_criterion(n: int, p: int) -> bool:
@@ -105,7 +106,7 @@ def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
 
     """
 
-    # Input validation
+    # Check that the input is valid by checking that base, exponent, and modulus are non-negative integers
     if not isinstance(base, int) or not isinstance(exponent, int) or not isinstance(modulus, int) or exponent < 0 or modulus < 0:
         raise ValueError("xponent, and modulus must be non-negative integers.")
     
@@ -140,10 +141,11 @@ def get_B_smooth_numbers(lower_limit, upper_limit, smoothness_level):
 
     """
 
-    # Input validation
+    # Check that the input is valid by checking that lower_limit, upper_limit, and smoothness_level are positive integers
     if not isinstance(lower_limit, int) or not isinstance(upper_limit, int) or not isinstance(smoothness_level, int) or lower_limit < 1 or upper_limit < 1 or smoothness_level < 1:
         raise ValueError("lower_limit, upper_limit, and smoothness_level must be positive integers.")
 
+    # Get the factor base to be used
     factor_base = get_factor_base(upper_limit)
 
     return
@@ -166,14 +168,15 @@ def find_modular_inverse(a, m):
 
     """
 
-    # Input validation
+    # Check that the input is valid by checking that a and m are positive integers
     if not isinstance(a, int) or not isinstance(m, int) or a < 1 or m < 1:
         raise ValueError("a and m must be positive integers.")
 
-    if greatest_common_divisor(a,m) != 1: # If 'a' and 'm' are not relatively prime, 'a' has no modular inverse.
+    # Check that 'a' and 'm' are relatively prime, i.e. gcd(a,m) = 1, otherwise 'a' has no modular inverse modulo 'm'
+    if greatest_common_divisor(a,m) != 1: 
         return None     
 
-    # We use the Extended Euclidean Algorithm to compute the multiplicative inverse of 'a' modulo 'm':
+    # Use the Extended Euclidean Algorithm to compute the multiplicative inverse of 'a' modulo 'm':
     u1, u2, u3 = 1, 0, a
     v1, v2, v3 = 0, 1, m
     while v3 != 0:
@@ -181,15 +184,35 @@ def find_modular_inverse(a, m):
         v1, v2, v3, u1, u2, u3 = (u1 - q * v1), (u2 - q * v2), (u3 - q * v3), v1, v2, v3
     return u1 % m 
 
-def get_factor_base(B):
+def get_factor_base(B, sieve='eratosthenes'):
     """
     This function returns a factor base with elements less than B. A factor base is just a small list of prime factors
     that you will use to build congruence relationships in order to generate multiple congruences of square integers. These,
     in turn, are used to factor a large number.
 
-    param B:
+    Args:
+        B (int): The upper limit of the factor base.
+        sieve (str): The sieve to be used to generate the factor base. The default value is 'eratosthenes'. Other options
+        are 'atkin' and 'sundaram'.
+
+    Returns:
+        list[int]: A factor base with elements less than B.
+
+    Raises:
+        ValueError: If `B` is not a positive integer.
+
     """
-    return sieve_of_eratosthenes(B)
+    # Check that the input is valid by checking that B is a positive integer
+    if not isinstance(B, int) or B < 1:
+        raise ValueError("B must be a positive integer.")
+
+    # Use the selected sieve to generate the factor base
+    if sieve == 'eratosthenes':
+        return sieve_of_eratosthenes(B)
+    elif sieve == 'atkin':
+        return sieve_of_atkin(B)
+    elif sieve == 'sundaram':
+        return sieve_of_sundaram(B)
 
 def greatest_common_divisor(a: int, b: int) -> int: # The Euclidean Algorithm
     """

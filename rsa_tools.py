@@ -5,8 +5,16 @@ from whole_number_operations import integer_sqrt, find_modular_inverse
 
 def hex_string_to_base_ten_integer(hex_value):
     """
-    This function takes a string representing a hexadecimal value (e.g., an RSA modulus)
-    and returns the same value as a base-10 integer. 
+    Converts a string representing a hexadecimal value (e.g., an RSA modulus) to the same value as a base-10 integer.
+
+    Args:
+        hex_value (str): A string representing a hexadecimal value.
+
+    Returns:
+        int: The base-10 integer value of the hexadecimal string.
+
+    Raises:
+        ValueError: If `hex_value` is not a string containing only hexadecimal digits. 
     """
 
     # Check that the input is a string containing only hexadecimal digits
@@ -18,7 +26,8 @@ def hex_string_to_base_ten_integer(hex_value):
 
 def generate_rsa_public_key(number_of_bits: int = 1024, public_exponent: int = 65537) -> list[int]:
     """
-    Generates an RSA public key.
+    Generates an RSA public key with the specified number of bits and public exponent. The public key
+    is returned as a list containing the public exponent and the RSA modulus.
 
     Args:
         number_of_bits (int): The number of bits for the RSA modulus. Defaults to 1024.
@@ -63,16 +72,16 @@ def generate_bad_rsa_public_key(weak_primes=False, weak_decryption_key=False, we
         ValueError: If number_of_bits is not a positive integer greater than 1, or if weak_primes, weak_decryption_key, or weak_modulus is not a boolean value.
     """
 
-    # First, check whether the input is valid
+    # First, check whether the input is valid by checking the type of each input and whether the number of bits is valid
     if not isinstance(number_of_bits, int) or number_of_bits < 2:
         raise ValueError("number_of_bits must be a positive integer greater than 1.")
     if not isinstance(weak_primes, bool) or not isinstance(weak_decryption_key, bool) or not isinstance(weak_modulus, bool):
         raise ValueError("weak_primes, weak_decryption_key, and weak_modulus must be boolean values.")
 
-    # Generate a weak RSA public key if requested. The key is weak if any of the following are true:
-    # 1. The primes are weak (i.e., the primes are too close together, making them vulnerable to a Fermat factorization attack)
-    # 2. The decryption key is weak (i.e., it is too small, making it vulnerable to a continued fraction attack)
-    # 3. The modulus is weak (i.e., they are too small, making them vulnerable to a brute force attack)
+    # Now we generate a weak RSA public key if requested. The key is weak if any of the following are true:
+    # 1. The primes are weak (i.e., the primes are too close together, making the modulus vulnerable to a Fermat factorization attack)
+    # 2. The decryption key is weak (i.e., it is too small, making the modulus and public exponent vulnerable to a continued fraction attack)
+    # 3. The modulus is weak (i.e., one or more of the prime factors is too small, making the modulus vulnerable to a brute force attack)
     if weak_primes:
         p = miller_rabin_get_prime(2 ** (number_of_bits - 1), 2 ** (number_of_bits))
         q = miller_rabin_get_prime(p, p + 1000000000)
@@ -91,4 +100,5 @@ def generate_bad_rsa_public_key(weak_primes=False, weak_decryption_key=False, we
         q = randint(2, 2**(number_of_bits))
         return [e, p*q]
             
+    # Return the public exponent and modulus
     return [e, p * q]
