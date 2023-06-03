@@ -2,13 +2,16 @@ from prime_number_sieves import sieve_of_eratosthenes
 
 def absolute_value(n: int or float) -> int or float:
     """
-    Returns the absolute value of a number.
+    Computes and returns the absolute value of a number.
 
     Args:
         n (int or float): The number for which the absolute value is to be computed.
 
     Returns:
         int or float: The absolute value of the given number.
+
+    Raises:
+        ValueError: If `n` is not an integer or a float.
 
     """
 
@@ -24,7 +27,24 @@ def absolute_value(n: int or float) -> int or float:
     
 def chinese_remainder_theorem(moduli: list[int], remainders=list[int]) -> int:
     """
-    TODO: Docstring
+    The Chinese Remainder Theorem states that if m_1, m_2, ..., m_k are pairwise coprime positive integers and
+    a_1, a_2, ..., a_k are any integers, then there exists an integer x such that x is congruent to a_i modulo
+    m_i for each i in the range [1, k]. This function computes and returns the smallest positive integer x
+    satisfying the above congruences.
+
+    Args:
+        moduli (list[int]): A list of pairwise coprime positive integers.
+        remainders (list[int]): A list of integers.
+
+    Returns:
+        int: The smallest positive integer x satisfying the congruences x is congruent to a_i modulo m_i for
+        each i in the range [1, k].
+
+    Raises:
+        ValueError: If `moduli` and `remainders` are not lists of the same length, or if `moduli` contains
+        a non-positive integer, or if `remainders` contains a negative integer or a non-integer greater than
+        or equal to the corresponding modulus.
+
     """
 
     # First, check that the input is valid by checking that moduli and remainders are lists of the same length
@@ -40,10 +60,11 @@ def chinese_remainder_theorem(moduli: list[int], remainders=list[int]) -> int:
         if remainders[i] >= moduli[i]:
             raise ValueError("remainders must be less than the corresponding modulus.")
         
-
+    # Now, we initialize the new modulus and x values to 1 and 0, respectively.
     new_modulus = 1
     x = 0
     
+    # TODO: This needs some work
     for i in range(len(moduli)):
         new_modulus *= moduli[i]
         product = 1
@@ -78,6 +99,10 @@ def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
     
     Returns:
         int: The result of `base`^`exponent` modulo `modulus`.
+
+    Raises:
+        ValueError: If `base`, `exponent`, or `modulus` is not a non-negative integer.
+
     """
 
     # Input validation
@@ -98,19 +123,53 @@ def fast_powering_algorithm(base: int, exponent: int, modulus: int) -> int:
     # Return the result 
     return value
 
-def get_B_smooth_numbers(lower_limit, upper_limit, B):
+def get_B_smooth_numbers(lower_limit, upper_limit, smoothness_level):
     """
-    TODO: Docstring
+    get_B_smooth_numbers returns a list of all B-smooth numbers in the range [lower_limit, upper_limit].
+
+    Args:
+        lower_limit (int): The lower limit of the range.
+        upper_limit (int): The upper limit of the range.
+        smoothness_level (int): The smoothness level.
+
+    Returns:
+        list[int]: A list of all B-smooth numbers in the range [lower_limit, upper_limit].
+
+    Raises:
+        ValueError: If `lower_limit`, `upper_limit`, or `smoothness_level` is not a positive integer.
+
     """
 
+    # Input validation
+    if not isinstance(lower_limit, int) or not isinstance(upper_limit, int) or not isinstance(smoothness_level, int) or lower_limit < 1 or upper_limit < 1 or smoothness_level < 1:
+        raise ValueError("lower_limit, upper_limit, and smoothness_level must be positive integers.")
 
+    factor_base = get_factor_base(upper_limit)
 
     return
 
 def find_modular_inverse(a, m):
     """
-    TODO: Docstring
+    This function returns the multiplicative inverse of 'a' modulo 'm'. If 'a' and 'm' are not relatively prime,
+    'a' has no modular inverse and the function returns None.
+
+    Args:
+        a (int): The integer whose modular inverse is to be computed.
+        m (int): The modulus.
+
+    Returns:
+        int: The multiplicative inverse of 'a' modulo 'm'.
+        None: If 'a' and 'm' are not relatively prime.
+
+    Raises:
+        ValueError: If `a` or `m` is not a positive integer.
+
     """
+
+    # Input validation
+    if not isinstance(a, int) or not isinstance(m, int) or a < 1 or m < 1:
+        raise ValueError("a and m must be positive integers.")
+
     if greatest_common_divisor(a,m) != 1: # If 'a' and 'm' are not relatively prime, 'a' has no modular inverse.
         return None     
 
