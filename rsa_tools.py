@@ -48,7 +48,19 @@ def generate_rsa_public_key(number_of_bits: int = 1024, public_exponent: int = 6
 
 def generate_bad_rsa_public_key(weak_primes=False, weak_decryption_key=False, weak_modulus=False, number_of_bits=1024):
     """
-    TODO: Docstring
+    Generates a weak RSA public key.
+
+    Args:
+        weak_primes (bool): If True, generates weak prime numbers for the key.
+        weak_decryption_key (bool): If True, generates a weak decryption key.
+        weak_modulus (bool): If True, generates a weak modulus for the key.
+        number_of_bits (int): The number of bits for the key's modulus. Must be a positive integer greater than 1.
+
+    Returns:
+        list: A list containing the public exponent (e) and the modulus (n) of the RSA public key.
+
+    Raises:
+        ValueError: If number_of_bits is not a positive integer greater than 1, or if weak_primes, weak_decryption_key, or weak_modulus is not a boolean value.
     """
 
     # First, check whether the input is valid
