@@ -7,4 +7,4 @@ You will also find my own implementations of common number theoretic functions f
 
 Stay tuned for updates!
 
-CAUTION: You should NOT use any tools in this library to secure actual sensitive information as the cipher implementations included in cryptAI are not cryptographically secure (this includes the RSA implementation). nor should you seek to access sensitive information for which you are not authorized. The ciphers included in cryptAI are NOT cryptographically secure. These tools are intended for entertainment purposes only!
+CAUTION: You should NOT use any tools in this library to secure actual sensitive information as the cipher implementations included in cryptAI are not cryptographically secure (this includes the RSA implementation). Nor should you seek to access sensitive information for which you are not authorized. These tools are intended for entertainment purposes only!
