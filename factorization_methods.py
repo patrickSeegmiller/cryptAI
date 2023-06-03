@@ -2,11 +2,27 @@ from whole_number_operations import fast_powering_algorithm, integer_sqrt, is_sq
 from rational_number_operations import get_cf_convergents, cf_expansion
 from primality_tests import miller_rabin_primality_test
 
-def continued_fraction_factorization(e, N):
+def continued_fraction_factorization(e: int, N: int) -> list[int]:
     """
-    TODO: Docstring
+    Performs continued fraction factorization on the RSA public exponent `e` and modulus `N`. 
+
+    Args:
+        e (int): The RSA public exponent.
+        N (int): The RSA modulus.
+
+    Returns:
+        list[int]: A list containing the two factors of `N`.
+
+    Raises:
+        ValueError: If `e` or `N` are not positive integers.
+
     """
 
+    # We first check that e and N are positive integers.
+    if not isinstance(e, int) or e <= 0 or not isinstance(N, int) or N <= 0:
+        raise ValueError("e and N must be positive integers.")
+    
+    # Now we get the convergents of the continued fraction expansion of e/N.
     convergents = get_cf_convergents(cf_expansion(e, N))
 
     for num, denom in convergents:
@@ -20,13 +36,11 @@ def continued_fraction_factorization(e, N):
     return None
 
 def fermat_factorization(n: int) -> list[int]:
-    '''
-        Performs Fermat's method for factoring an odd number `n`.
-    
-        Fermat's method relies on the fact that any odd number can be expressed 
-        as a difference of squares. It checks numbers near the square root of `n` 
-        for ways in which `n` can be written as a difference of perfect squares. 
-        If `n = b^2 - a^2`, it factors as `n = (b-a)(b+a)`.
+    """
+    Performs Fermat's method for factoring an odd number `n`. Fermat's method relies on the fact that any 
+    odd number can be expressed as a difference of squares. It checks numbers near the square root of `n` 
+    for ways in which `n` can be written as a difference of perfect squares, because if `n = b^2 - a^2`, 
+    it factors as `n = (b-a)(b+a)`.
 
     Args:
         n (int): The number to be factored.
@@ -37,7 +51,7 @@ def fermat_factorization(n: int) -> list[int]:
     Raises:
         ValueError: If `n` is not an odd number greater than 1.
 
-    '''
+    """
 
     # We first check that n is an odd number greater than 1.
     if not isinstance(n, int) or n <= 1 or n % 2 == 0: 
@@ -64,7 +78,19 @@ def fermat_factorization(n: int) -> list[int]:
 
 def known_decryption_key_factorization(decryption_key, public_exponent, modulus):
     """
-    TODO: Docstring
+    Uses the Chinese Remainder Theorem to factor a modulus N when the decryption key d is known.
+    
+    Args:
+        decryption_key (int): The decryption key d.
+        public_exponent (int): The public exponent e.
+        modulus (int): The modulus N.
+
+    Returns:
+        list[int]: A list containing the two factors of N.
+
+    Raises:
+        ValueError: If the public exponent and the modulus are not positive integers.
+
     """
 
     k = decryption_key * public_exponent - 1
@@ -131,8 +157,10 @@ def pollard_rho_factorization(N: int, x=1, y=2) -> list[int]:
     if miller_rabin_primality_test(N):
         raise ValueError(f"{N} is a probable prime, so it (almost certainly) cannot be factorized.")
 
+    # Set the maximum number of iterations for the factorization algorithm.
     MAX_ITERATIONS = 1000000
 
+    # Perform the factorization algorithm.
     g = greatest_common_divisor(absolute_value(y - x), N)
     for i in range(MAX_ITERATIONS):
         x = (x**2 + 1) % N
