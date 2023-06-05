@@ -1,5 +1,5 @@
 import numpy as np
-from whole_number_operations import find_modular_inverse
+from whole_number_operations import find_modular_inverse, greatest_common_divisor
 
 class CaesarCipher():
     def __init__(self) -> None:
@@ -23,6 +23,15 @@ class CaesarCipher():
             key (int): The key used to generate the Caesar Cipher.
         """
         self.key = key
+
+    def get_key(self) -> int:
+        """
+        Gets the shift used to generate the Caesar Cipher.
+
+        Returns:
+            int: The shift used to generate the Caesar Cipher.
+        """
+        return self.key
 
     def encrypt(self, plaintext: str) -> str:
         """
@@ -79,7 +88,7 @@ class CaesarCipher():
         # unchanged.
         for char in ciphertext:
             if char.upper() in self.alphabet:
-                plaintext += self.alphabet[(self.alphabet.index(char.upper()) - self.shift) % 26]
+                plaintext += self.alphabet[(self.alphabet.index(char.upper()) - self.key) % 26]
             else:
                 plaintext += char
 
@@ -344,6 +353,37 @@ class AffineCipher():
         self.addend = 3
         self.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
+    def set_key(self, factor: int, addend: int) -> None:
+        """
+        Sets the key used to generate the Affine Cipher.
+
+        Args:
+            factor (int): The factor in the affine function.
+            addend (int): The addend in the affine function.
+
+        Raises:
+            ValueError: If the factor is not relatively prime to 26 or if the addend is not an integer.
+        """
+
+        # Check that the factor is relatively prime to 26
+        if not greatest_common_divisor(factor, 26) == 1:
+            raise ValueError("Factor must be relatively prime to 26.")
+        # Check that the addend is an integer
+        elif not isinstance(addend, int):
+            raise ValueError("Addend must be an integer.")
+
+        self.factor = factor
+        self.addend = addend
+
+    def get_key(self) -> tuple[int, int]:
+        """
+        Returns the key used to generate the Affine Cipher.
+
+        Returns:
+            Tuple[int, int]: The key used to generate the Affine Cipher.
+        """
+        return (self.factor, self.addend)
+
     def encrypt(self, plaintext: str) -> str:
         """
         Encrypts a message using the Affine Cipher.
@@ -492,7 +532,7 @@ class OneTimePad():
             str: The encrypted message.
         """
 
-        self.key = 
+        
         
     
     def decrypt(self, ciphertext: str) -> str:
@@ -523,4 +563,74 @@ class PlayfairCipher():
         return self.key
     
     def set_key(self, key: str) -> None:
+        """
+        Sets the key used to generate the Playfair Cipher.
 
+        Args:
+            key (str): The key used to generate the Playfair Cipher.
+        """
+        self.key = key
+
+class KeyedColumnarTranspositionCipher():
+    def __init__(self) -> None:
+        """
+        Creates a Keyed Columnar Transposition Cipher object.
+        """
+
+class ColumnarTranspositionCipher():
+    def __init__(self) -> None:
+        """
+        Creates a Columnar Transposition Cipher object.
+        """
+
+        
+    def set_key(self, key: list[int]) -> None:
+        """
+        Sets the key used to generate the Columnar Transposition Cipher.
+
+        Args:
+            key (list): The key used to generate the Columnar Transposition Cipher.
+        """
+
+    def encrypt(self, plaintext: str) -> str:
+        """
+        Encrypts a message using the Columnar Transposition Cipher.
+
+        Args:
+            plaintext (str): The message to encrypt.
+
+        Returns:
+            str: The encrypted message.
+        """
+    def decrypt(self, ciphertext: str) -> str:
+        """
+        Decrypts a message using the Columnar Transposition Cipher.
+
+        Args:
+            ciphertext (str): The message to decrypt.
+
+        Returns:
+            str: The decrypted message.
+        """
+
+class RailFenceCipher():
+    def __init__(self) -> None:
+        """
+        Creates a Rail Fence Cipher object.
+        """
+
+class AtBashCipher():
+    def __init__(self) -> None:
+        """
+        Creates an AtBash Cipher object.
+        """
+
+class DoubleColumnarTransposition():
+    def __init__(self) -> None:
+        pass
+
+class ADFGXCipher():
+    def __init__(self) -> None:
+        """
+        Creates an ADFGX Cipher object.
+        """

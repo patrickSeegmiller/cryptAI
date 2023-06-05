@@ -1,4 +1,4 @@
-from prime_number_sieves import sieve_of_eratosthenes, sieve_of_sundaram, sieve_of_atkin
+from prime_number_sieves import sieve_of_eratosthenes #sieve_of_sundaram, sieve_of_atkin
 
 def absolute_value(n: int or float) -> int or float:
     """
