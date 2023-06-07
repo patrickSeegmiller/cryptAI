@@ -1,8 +1,6 @@
 import numpy as np
 import random
 
-from cryptML/number-theoretic-tools/whole_number_operations import find_modular_inverse, greatest_common_divisor
-
 class AffineCipher():
     """
     An Affine Cipher object. The Affine Cipher is a special case of the Simple Substitution Cipher where the key is
