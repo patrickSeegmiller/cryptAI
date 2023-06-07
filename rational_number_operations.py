@@ -1,4 +1,3 @@
-
 def continued_fraction_expansion(num: int, denom: int) -> list[int]:
     """
     cf_expansion takes the numerator and denominator of a positive rational number as parameters and returns its
@@ -68,3 +67,4 @@ def get_continued_fraction_convergents(continued_fraction: list[int]) -> list[tu
 
     # We return the list of tuples representing the convergents.
     return list(zip(h,k))
+

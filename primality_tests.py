@@ -1,4 +1,5 @@
 from random import randint
+import math
 
 from whole_number_operations import fast_powering_algorithm, integer_sqrt, greatest_common_divisor
 from prime_number_sieves import sieve_of_eratosthenes
@@ -143,7 +144,7 @@ def miller_rabin_primality_test(n, num_potential_witnesses = 100, percent_certai
     # If percent_certain is specified we determine the approximate number of potential
     # witnesses of compositeness that need to be tested.
     if percent_certain != None:
-        num_potential_witnesses = int((-1 / 2) * math.log2(percent_certain / log(n)))
+        num_potential_witnesses = int((-1 / 2) * math.log2(percent_certain / math.log(n)))
 
     # We randomly select integers in the interval [2,n) that we will use as potential witnesses
     # for the compositeness of n.

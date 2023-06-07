@@ -57,3 +57,38 @@ def synthetic_division(polynomial_coefficients: list[float], constant_term: floa
 
     # Return the coefficients of the resulting polynomial
     return resultant_coefficients
+
+def polynomial_long_division(dividend: list[float], divisor: list[float]) -> tuple[list[float], list[float]]:
+    """
+    Performs polynomial long division on a dividend and divisor given their coefficients.
+
+    Args:
+        dividend (list[float]): The coefficients of the dividend in descending order of degree.
+        divisor (list[float]): The coefficients of the divisor in descending order of degree.
+
+    Returns:
+        tuple[list[float], list[float]]: A tuple containing the coefficients of the quotient and remainder of the
+        polynomial long division, both in descending order of degree.
+
+    Raises:
+        ValueError: If the input parameters are not in the expected format.
+    """
+
+    # First, check that the input is valid by checking that dividend and divisor are lists of integers.
+    if not isinstance(dividend, list) or not all(isinstance(coeff, int) for coeff in dividend):
+        raise ValueError("Dividend coefficients must be a list of integers or floats.")
+    if not isinstance(divisor, list) or not all(isinstance(coeff, int) for coeff in divisor):
+        raise ValueError("Divisor coefficients must be a list of integers or floats.")
+    
+    # Perform polynomial long division
+    quotient = []
+    remainder = dividend
+    while len(remainder) >= len(divisor):
+        # Calculate the next term of the quotient
+        quotient.append(remainder[0] / divisor[0])
+        # Calculate the next remainder
+        remainder = [remainder[i] - quotient[-1] * divisor[i] for i in range(len(divisor))] + remainder[len(divisor):]
+
+    # Return the quotient and remainder
+    return (quotient, remainder)
+

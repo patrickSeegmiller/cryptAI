@@ -1,5 +1,8 @@
+import math
+
 from whole_number_operations import integer_sqrt
 from prime_number_sieves import sieve_of_eratosthenes
+from factorization_methods import fermat_factorization
 
 def index_of_coincidence(text):
     """
@@ -124,3 +127,153 @@ def get_prime_factorization(n: int) -> list[tuple]:
 
     # Return the prime factorization list.
     return prime_factorization
+
+def get_ngram_frequency(text: str, n: int) -> dict:
+    """
+    Computes and returns the frequency distribution of n-grams from a string of text, where n is the number of
+    characters in each n-gram. This is particularly useful for cracking monoalphabetic, polyalphabetic,
+    polygraphic, and columnar transposition ciphers, especially when used in conjunction with metaheuristic
+    algorithms such as simulated annealing.
+
+    Args:
+        text (str): The text to compute the frequency distribution of.
+        n (int): The number of characters in each n-gram.
+
+    Returns:
+        dict: A dictionary containing the frequency distribution of n-grams.
+
+    Raises:
+        ValueError: If text is not a string or n is not a positive integer.
+
+    """
+
+    # Check that text is a string and n is a positive integer.
+    if not isinstance(text, str) or not isinstance(n, int) or n <= 0:
+        raise ValueError("text must be a string and n must be a positive integer.")
+    
+    # Initialize a dictionary to store the frequency distribution of n-grams.
+    frequency_distribution = {}
+
+    # Iterate over each n-gram in the text, adding it to the dictionary or
+    # incrementing its count if it already exists.
+    for i in range(len(text) - n + 1):
+        n_gram = text[i:i+n]
+        if n_gram in frequency_distribution:
+            frequency_distribution[n_gram] += 1
+        else:
+            frequency_distribution[n_gram] = 1
+
+    # Return the frequency distribution dictionary.
+    return frequency_distribution
+
+def get_ngram_frequency_from_file(file_path: str, n: int) -> dict:
+    """
+    Computes and returns the frequency distribution of n-grams from a file, where n is the number of
+    characters in each n-gram. See get_ngram_frequency for more information.
+
+    Args:
+        file_path (str): The path to the file to compute the frequency distribution of.
+        n (int): The number of characters in each n-gram.
+
+    Returns:
+        dict: A dictionary containing the frequency distribution of n-grams.
+
+    Raises:
+        ValueError: If file_path is not a string or n is not a positive integer.
+
+    """
+
+    # Check that file_path is a string and n is a positive integer.
+    if not isinstance(file_path, str) or not isinstance(n, int) or n <= 0:
+        raise ValueError("file_path must be a string and n must be a positive integer.")
+    
+    # Initialize a dictionary to store the frequency distribution of n-grams.
+    frequency_distribution = {}
+
+    # Open the file and iterate over each line.
+    with open(file_path, "r") as file:
+        for line in file:
+            # Iterate over each n-gram in the line, adding it to the dictionary or
+            # incrementing its count if it already exists.
+            for i in range(len(line) - n + 1):
+                n_gram = line[i:i+n]
+                if n_gram in frequency_distribution:
+                    frequency_distribution[n_gram] += 1
+                else:
+                    frequency_distribution[n_gram] = 1
+
+    # Return the frequency distribution dictionary.
+    return frequency_distribution
+
+def compute_text_entropy(text: str) -> float:
+    """
+    Computes and returns the Shannon entropy of a string of text. This is useful for
+    determining whether a string of text is encrypted or not.
+
+    Args:
+        text (str): The text to compute the entropy of.
+
+    Returns:
+        float: The Shannon entropy of the text.
+
+    Raises:
+        ValueError: If text is not a string.
+
+    """
+
+    #Check that text is a string.
+    if not isinstance(text, str):
+        raise ValueError("text must be a string.")
+    
+    # Get the frequency distribution of characters in the text.
+    frequency_distribution = get_ngram_frequency(text, 1)
+
+    # Compute the entropy of the text.
+    entropy = 0
+    for frequency in frequency_distribution.values():
+        probability = frequency / len(text)
+        entropy -= probability * math.log2(probability)
+
+    # Return the entropy of the text.
+    return entropy
+
+def compute_text_entropy_from_file(file_path: str) -> float:
+    """
+    Computes and returns the Shannon entropy of a file. This is useful for
+    determining whether a file is encrypted or not.
+
+    Args:
+        file_path (str): The path to the file to compute the entropy of.
+
+    Returns:
+        float: The Shannon entropy of the file.
+
+    Raises:
+        ValueError: If file_path is not a string.
+
+    """
+
+    #Check that file_path is a string.
+    if not isinstance(file_path, str):
+        raise ValueError("file_path must be a string.")
+    
+    # Get the frequency distribution of characters in the file.
+    frequency_distribution = get_ngram_frequency_from_file(file_path, 1)
+
+    # Compute the entropy of the file.
+    entropy = 0
+    for frequency in frequency_distribution.values():
+        probability = frequency / sum(frequency_distribution.values())
+        entropy -= probability * math.log2(probability)
+
+    # Return the entropy of the file.
+    return entropy
+
+def fermat_attack(n: int) -> tuple:
+    """
+    Attempts to factor a positive integer n using Fermat's factorization method. This method
+    is particularly useful for factoring large integers that are the product of two primes
+    that are close together. This serves as a wrapper for the fermat_factorization function.
+    
+    """
+    return fermat_factorization(n)
