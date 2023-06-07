@@ -1,7 +1,7 @@
 from random import randint
 
-from primality_tests import miller_rabin_get_prime
-from whole_number_operations import integer_sqrt, find_modular_inverse
+from number_theoretic_tools.primality_tests import miller_rabin_get_prime
+from number_theoretic_tools.whole_number_operations import integer_sqrt, find_modular_inverse
 
 def hex_string_to_base_ten_integer(hex_value):
     """

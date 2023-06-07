@@ -1,5 +1,5 @@
 from whole_number_operations import fast_powering_algorithm, integer_sqrt, is_square, integer_nthrt, find_modular_inverse, greatest_common_divisor, absolute_value, integer_quadratic_formula, get_factor_base
-from rational_number_operations import get_cf_convergents, cf_expansion
+from rational_number_operations import continued_fraction_expansion, get_continued_fraction_convergents
 from primality_tests import miller_rabin_primality_test
 
 def continued_fraction_factorization(e: int, N: int) -> list[int]:
@@ -23,7 +23,7 @@ def continued_fraction_factorization(e: int, N: int) -> list[int]:
         raise ValueError("e and N must be positive integers.")
     
     # Now we get the convergents of the continued fraction expansion of e/N.
-    convergents = get_cf_convergents(cf_expansion(e, N))
+    convergents = get_continued_fraction_convergents(continued_fraction_expansion(e, N))
 
     for num, denom in convergents:
         if num == 0:
@@ -99,7 +99,7 @@ def known_decryption_key_factorization(decryption_key, public_exponent, modulus)
         factors_of_two += 1
         k = k // 2
 
-    
+    # TODO: Finish this function. Will use the Chinese Remainder Theorem to factor N through the decryption key d.
 
 def pollard_p_minus_one_factorization(N: int, a=2) -> list[int]:
     """

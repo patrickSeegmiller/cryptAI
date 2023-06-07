@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-from whole_number_operations import find_modular_inverse, greatest_common_divisor
+from number_theoretic_tools.whole_number_operations import find_modular_inverse, greatest_common_divisor
 
 class AffineCipher():
     """

@@ -1,8 +1,8 @@
 import math
 
-from whole_number_operations import integer_sqrt
-from prime_number_sieves import sieve_of_eratosthenes
-from factorization_methods import fermat_factorization
+from number_theoretic_tools.whole_number_operations import integer_sqrt
+from number_theoretic_tools.prime_number_sieves import sieve_of_eratosthenes
+from number_theoretic_tools.factorization_methods import fermat_factorization
 
 def index_of_coincidence(text):
     """

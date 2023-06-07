@@ -2,8 +2,6 @@
 
 import string
 import random
-import copy
-from typing import Any
 
 class Rotor():
     def __init__(self, set_type=None) -> None:
