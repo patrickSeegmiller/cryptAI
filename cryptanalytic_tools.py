@@ -1,8 +1,8 @@
 import math
 
-from number_theoretic_tools.whole_number_operations import integer_sqrt
-from number_theoretic_tools.prime_number_sieves import sieve_of_eratosthenes
-from number_theoretic_tools.factorization_methods import fermat_factorization
+from whole_number_operations import integer_sqrt
+from prime_number_sieves import sieve_of_eratosthenes
+from factorization_methods import fermat_factorization, trial_division_factorization, pollard_rho_factorization, pollard_p_1_factorization, williams_p_1_factorization, quadratic_sieve_factorization, shanks_square_forms_factorization, rational_sieve, general_number_field_sieve
 
 def index_of_coincidence(text):
     """
@@ -398,9 +398,9 @@ def factorization_attack(n: int, algo='trial_division') -> tuple:
         'williams_p_1': williams_p_1_factorization,
         'fermat': fermat_factorization,
         'shanks_square_forms': shanks_square_forms_factorization,
-        'rational_sieve': rational_sieve_factorization,
+        'rational_sieve': rational_sieve,
         'quadratic_sieve': quadratic_sieve_factorization,
-        'general_number_field_sieve': general_number_field_sieve_factorization
+        'general_number_field_sieve': general_number_field_sieve
     }
 
     # Factor n using the selected factorization algorithm and return the factors or max_iterations is reached

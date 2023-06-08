@@ -37,46 +37,14 @@ def sieve_of_sundaram(N: int) -> list[int]:
         
     Returns:
         list: A list of prime numbers up to N.
+
+    Raises:
+        ValueError: If N is not an integer greater than 1.
     '''
 
-    #Input validation
+    # Check that N is an integer greater than 1.
     if N < 2 or not isinstance(N, int):
         raise ValueError("N must be an integer greater than 1.")
     
     #TODO: Implement Sieve of Sundaram algorithm
     return []
-
-if __name__ == '__main__':
-    # Default input if no command-line argument is provided
-    default_limit = 100
-
-    # Usage information
-    print("Sieve of Eratosthenes - Prime Number Generator")
-    print("Usage: python sieve_of_eratosthenes.py <N>")
-    print("       where <N> is the limit up to which prime numbers should be generated.")
-    print(f"\nIf no argument is provided, the default limit of {default_limit} will be used.")
-
-    # Check command-line arguments for a limit
-    if len(sys.argv) == 2:
-        # Parse the limit from the command-line argument
-        try:
-            N = int(sys.argv[1])
-        except ValueError:
-            print("Invalid argument. Please provide a valid integer as the limit.")
-            sys.exit(1)
-    elif len(sys.argv) > 2:
-        print("Invalid number of arguments. Please provide a single integer as the limit.")
-        sys.exit(1)
-    else:
-        # Use the default limit
-        N = default_limit
-
-    # Generate prime numbers based on the limit
-    primes = sieve_of_eratosthenes(N)
-
-    # Print the result to the console
-    print(f"Prime numbers up to {N}:")
-    print(primes)
-
-    # Exit gracefully with exit code 0
-    sys.exit(0)

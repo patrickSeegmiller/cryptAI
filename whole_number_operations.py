@@ -214,9 +214,16 @@ def get_B_smooth_numbers(lower_limit, upper_limit, smoothness_level):
         raise ValueError("lower_limit, upper_limit, and smoothness_level must be positive integers.")
 
     # Get the factor base to be used
-    factor_base = get_factor_base(upper_limit)
+    factor_base = get_factor_base(smoothness_level)
 
-    return
+    # Get the list of all B-smooth numbers in the range [lower_limit, upper_limit]
+    B_smooth_numbers = []
+    for n in range(lower_limit, upper_limit + 1):
+        if is_B_smooth(n, factor_base):
+            B_smooth_numbers.append(n)
+
+    # Return the list of all B-smooth numbers in the range [lower_limit, upper_limit]
+    return B_smooth_numbers
 
 def get_factor_base(B, sieve='eratosthenes'):
     """
@@ -339,15 +346,15 @@ def integer_nthrt(n: int, index: int) -> int:
     if n == 0:
         return 0
 
+    # Use a binary search to find a powers of 2 that bounds n.
     high = 1
     while high ** index < n:
         high *= 2
     low = high // 2
 
+    # Use a binary search to find the nth root of n
     while high - low > 1:
         middle = (low + high) // 2
-
-        
         if middle ** index < n:
             low = middle
         elif n < middle ** index:
@@ -355,6 +362,7 @@ def integer_nthrt(n: int, index: int) -> int:
         else:
             return middle
 
+    # If
     if high ** index == n:
         return high
     else:
@@ -389,12 +397,38 @@ def integer_quadratic_formula(a, b, c):
     # Finally, we compute the roots of the quadratic equation
     return [(-b + integer_sqrt(b * b - 4 * a *c))//(2 * a), (-b - integer_sqrt(b * b - 4 * a *c))//(2 * a)]
 
-def is_b_smooth(n: int, B: int) -> bool:
+def is_B_smooth(n: int, B: int) -> bool:
     """
-    TODO: Docstring
+    Determines whether a number is B-smooth by checking whether all of its prime factors are less than or equal to B.
+
+    Args:
+        n (int): The number to check.
+        B list[int]: The factor base.
+
+    Returns:
+        bool: True if the number is B-smooth, False otherwise.
+
+    Raises:
+        ValueError: If n is not a positive integer.
+        ValueError: If B is not a list of positive integers.
+
     """
 
-    # TODO: Implement this function
+    # Check that n is a positive integer
+    if not isinstance(n, int) or n < 0:
+        raise ValueError("n must be a positive integer.")
+    # Chec that B is a list of positive integers
+    if not isinstance(B, list) or not all(isinstance(b, int) and b > 0 for b in B):
+        raise ValueError("B must be a list of positive integers.")
+
+    # Check whether all of the prime factors of n are less than or equal to B by dividing n by the elements of B
+    # until n is no longer divisible by any of the elements of B
+    for b in B:
+        while n % b == 0:
+            n //= b
+    
+    # If n is 1, then all of its prime factors are less than or equal to B
+    return n == 1
 
 def is_nth_root(n: int, index: int) -> bool:
     """

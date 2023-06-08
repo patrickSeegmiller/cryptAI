@@ -101,7 +101,7 @@ def known_decryption_key_factorization(decryption_key, public_exponent, modulus)
 
     # TODO: Finish this function. Will use the Chinese Remainder Theorem to factor N through the decryption key d.
 
-def pollard_p_minus_one_factorization(N: int, a=2) -> list[int]:
+def pollard_p_1_factorization(N: int, a=2) -> list[int]:
     """
     Factorizes a composite number N using Pollard's p - 1 Factorization Algorithm. Pollard's 
 
