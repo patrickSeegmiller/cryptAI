@@ -2,7 +2,7 @@
 import math
 import random
 
-from encryption_decryption.cryptanalytic_tools import compute_text_entropy, get_ngram_frequency, get_ngram_frequency_from_file
+from encryption_decryption.cryptanalytic_tools import compute_text_entropy, get_ngram_frequency, get_ngram_frequency_from_file, load_ngram_frequencies
 
 class NGramSimulatedAnnealing():
     def __init__(self, text: str, n=[1, 2, 3, 4]) -> None:
@@ -30,7 +30,27 @@ class NGramSimulatedAnnealing():
         for i in n:
             self.expected_ngram_frequencies[i] = load_ngram_frequencies("machine_learning_tools/english_ngram_frequencies.txt", i)
 
+        # Initialize the current key to a random dictionary, mapping symbols in the ciphertext to English alphabet characters.
+        self.current_key = {}
+        ciphertext_symbols = set(self.text)
+        alphabet = "abcdefghijklmnopqrstuvwxyz"
+        for symbol in ciphertext_symbols:
+            self.current_key[symbol] = random.choice(alphabet)
+
+        # Initialize the current score.
+        self.current_score = self.compute_score()
+
     def compute_score(self):
+        """
+        Computes the score of the current key by the sum of the squared differences between the expected and actual n-gram 
+        relative frequencies.
+        """
+        
+         
+
+
+    def get_next_state(self):
+
 
 
 

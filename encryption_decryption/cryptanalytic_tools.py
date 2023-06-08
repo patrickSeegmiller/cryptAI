@@ -269,6 +269,54 @@ def compute_text_entropy_from_file(file_path: str) -> float:
     # Return the entropy of the file.
     return entropy
 
+def generate_ngram_frequencies(file_path: str) -> None:
+    """
+    Generates a file containing the frequency distribution of n-grams from a file of text.
+    """
+
+
+def load_ngram_frequencies(file_path: str) -> dict:
+    """
+    Loads a dictionary containing the relative frequency distribution of n-grams from a file. The file consists of
+    four sections sepearated by a line containing only the character "#". The first section contains the
+    frequency distribution of unigrams, the second section contains the frequency distribution of bigrams,
+    the third section contains the frequency distribution of trigrams, and the fourth section contains the
+    frequency distribution of quadgrams. The format of each section is as follows:
+        n-gram, relative_frequency
+        n-gram, relative_frequency
+        ...
+    Only the 20 most common n-grams are included in the file for n-grams of length greater than one.
+    """
+
+    # Check that file_path is a string.
+    if not isinstance(file_path, str):
+        raise ValueError("file_path must be a string.")
+    
+    # Initialize a dictionary to store the frequency distributions of the different n-grams.
+    ngram_frequencies = {}
+
+    # Initialize the n-gram size.
+    n = 1
+
+    # Open the file and iterate over each line.
+    with open(file_path, "r") as file:
+        # Skip the first line.
+        next(file)
+
+        # For each of the four sections, iterate over each line, adding the n-gram and its
+        # relative frequency to a dictionary. Then add the dictionary to the ngram_frequencies dictionary.
+        for line in file:
+            if line == "#\n":
+                frequency_distribution = {}
+                ngram_frequencies[n] = frequency_distribution
+                n += 1
+            else:
+                ngram, frequency = line.split(", ")
+                frequency_distribution[ngram] = float(frequency)
+        
+    # Return the ngram_frequencies dictionary.
+    return ngram_frequencies
+
 def fermat_attack(n: int) -> tuple:
     """
     Attempts to factor a positive integer n using Fermat's factorization method. This method
@@ -276,4 +324,13 @@ def fermat_attack(n: int) -> tuple:
     that are close together. This serves as a wrapper for the fermat_factorization function.
     
     """
+    # Check that n is a positive integer.
+    if not isinstance(n, int) or n <= 0:
+        raise ValueError("n must be a positive integer.")
+    
+    # Set the maximum number of iterations.
+    max_iterations = 1000000
+
+    # Run the fermat_factorization function until it returns a tuple of two factors or the
+    # maximum number of iterations is reached.
     return fermat_factorization(n)
