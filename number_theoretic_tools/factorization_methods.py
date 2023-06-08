@@ -199,3 +199,67 @@ def shanks_square_forms_factorization(N):
     """
 
     # TODO: Implement the algorithm
+
+def trial_division_factorization(N: int) -> list[int]:
+    """
+    Applies trial division up to the square root of N to factor N.
+    
+    Args:
+        N (int): The number to be factorized.
+
+    Returns:
+        list[int]: A list containing two factors of N.
+
+    Raises:
+        ValueError: If N is a probable prime, which is checked by using the Miller-Rabin primality test.
+
+    """
+
+    # Check whether N is a probable prime.
+    if miller_rabin_primality_test(N):
+        raise ValueError(f"{N} is a probable prime, so it (almost certainly) cannot be factorized.")
+
+    # Perform trial division up to the square root of N.
+    for i in range(2, integer_sqrt(N) + 1):
+        if N % i == 0:
+            print(f"Trial division factored {N}: ", end="")
+            return [i, N // i]
+
+    print(f"Trial division did not succeed in finding a non trivial factor of {N}.")
+    return None
+
+def williams_p_1_factorization(N: int, B=1000) -> list[int]:
+    """
+    Factorizes a composite number N using Williams' p + 1 Factorization Algorithm.
+
+    Args:
+        N (int): The number to be factorized.
+        B (int, optional): The bound to be used in the factorization algorithm. Defaults to 1000.
+
+    Returns:
+        list[int]: A list containing two nontrivial factors of N.
+
+    Raises:
+        ValueError: If N is a probable prime, which is checked by using the Miller-Rabin primality test.
+
+    """
+
+    # TODO This needs to be tested.
+
+    # Check whether N is a probable prime.
+    if miller_rabin_primality_test(N):
+        raise ValueError(f"{N} is a probable prime, so it (almost certainly) cannot be factorized.")
+
+    # Set the upper bound for the exponent in the factorization algorithm.
+    UPPER_BOUND = 1000000
+
+    # Perform the factorization algorithm.
+    for i in range(2, UPPER_BOUND):
+        a = fast_powering_algorithm(2, i, N)
+        d = greatest_common_divisor(a - 1, N)
+        if 1 < d and d < N:
+            print(f"Williams' p + 1 Factorization Algorithm factored {N}: ", end="")
+            return [d, N // d]
+
+    print(f"Williams' p + 1 Factorization Algorithm did not succeed in finding a non trivial factor of {N} with an upper bound of {UPPER_BOUND}.")
+    return None

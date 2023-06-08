@@ -269,10 +269,62 @@ def compute_text_entropy_from_file(file_path: str) -> float:
     # Return the entropy of the file.
     return entropy
 
-def generate_ngram_frequencies(file_path: str) -> None:
+def generate_ngram_frequencies(file_path: str, n=[1, 2, 3, 4]) -> None:
     """
-    Generates a file containing the frequency distribution of n-grams from a file of text.
+    Generates a file containing the relative frequency distribution of n-grams from a file of text.
+    The generated file consists of max(n) sections sepearated by a line containing only the character "#" and
+    each section contains the frequency distribution of n-grams of length n. The format of each section is as follows:
+        n-gram, relative_frequency
+        n-gram, relative_frequency
+        ...
+    Only the 20 most common n-grams are included in the file for n-grams of length greater than one.
+
+    Args:
+        file_path (str): The path to the file to compute the frequency distribution of.
+        n (list): A list of integers representing the number of characters in each n-gram.
+
+    Raises:
+        ValueError: If file_path is not a string or n is not a list of positive integers.
+
     """
+
+    # Check that file_path is a valid.
+    if not isinstance(file_path, str):
+        raise ValueError("file_path must be a string.")
+    
+    # Check that n is a list of positive integers.
+    if not isinstance(n, list) or not all(isinstance(i, int) and i > 0 for i in n):
+        raise ValueError("n must be a list of positive integers.")
+    
+    # Initialize a dictionary to store the frequency distributions of the different n-grams.
+    ngram_frequencies = {}
+
+    # Open the file and iterate over each line.
+    with open(file_path, "r") as file:
+        for line in file:
+            # Iterate over each n-gram in the line, adding it to the dictionary or
+            # incrementing its count if it already exists.
+            for i in range(len(line) - max(n) + 1):
+                for j in n:
+                    n_gram = line[i:i+j]
+                    if n_gram in ngram_frequencies:
+                        ngram_frequencies[n_gram] += 1
+                    else:
+                        ngram_frequencies[n_gram] = 1
+
+    # Sort the n-grams in each frequency distribution by their frequency.
+    for ngram_frequency in ngram_frequencies.values():
+        ngram_frequency = dict(sorted(ngram_frequency.items(), key=lambda item: item[1], reverse=True))
+
+    # Write the frequency distributions to a file.
+    with open("ngram_frequencies.txt", "w") as file:
+        for i in range(max(n)):
+            for ngram, frequency in ngram_frequencies[i].items():
+                file.write(f"{ngram}, {frequency}\n")
+            file.write("#\n")
+    
+    # Return the frequency distribution dictionary.
+    return ngram_frequencies
 
 
 def load_ngram_frequencies(file_path: str) -> dict:
@@ -317,20 +369,46 @@ def load_ngram_frequencies(file_path: str) -> dict:
     # Return the ngram_frequencies dictionary.
     return ngram_frequencies
 
-def fermat_attack(n: int) -> tuple:
+def factorization_attack(n: int, algo='trial_division') -> tuple:
     """
-    Attempts to factor a positive integer n using Fermat's factorization method. This method
-    is particularly useful for factoring large integers that are the product of two primes
-    that are close together. This serves as a wrapper for the fermat_factorization function.
+    Attempts to factor a positive integer n by brute force using the selected factorization algorithm. 
     
+    Args:
+        n (int): The number to factor.
+        algo (str): The factorization algorithm to use. Options are 'trial_division', 'pollard_rho', 'pollard_p_1', 
+            'williams_p_1', 'fermat', 'shanks_square_forms', 'rational_sieve', 'quadratic_sieve', and 'general_number_field_sieve'.
+
     """
     # Check that n is a positive integer.
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer.")
     
-    # Set the maximum number of iterations.
+    # Check that algo is a valid factorization algorithm.
+    if algo not in ['trial_division', 'pollard_rho', 'pollard_p_1', 'williams_p_1', 'fermat', 'shanks_square_forms', 'rational_sieve', 'quadratic_sieve', 'general_number_field_sieve']:
+        raise ValueError("algo must be a valid factorization algorithm.")
+    
+    # Set a maximum number of iterations for the factorization algorithm.
     max_iterations = 1000000
+    
+    # Initialize a dictionary to store the factorization algorithms.
+    factorization_algorithms = {
+        'trial_division': trial_division_factorization,
+        'pollard_rho': pollard_rho_factorization,
+        'pollard_p_1': pollard_p_1_factorization,
+        'williams_p_1': williams_p_1_factorization,
+        'fermat': fermat_factorization,
+        'shanks_square_forms': shanks_square_forms_factorization,
+        'rational_sieve': rational_sieve_factorization,
+        'quadratic_sieve': quadratic_sieve_factorization,
+        'general_number_field_sieve': general_number_field_sieve_factorization
+    }
 
-    # Run the fermat_factorization function until it returns a tuple of two factors or the
-    # maximum number of iterations is reached.
-    return fermat_factorization(n)
+    # Factor n using the selected factorization algorithm and return the factors or max_iterations is reached
+    # without finding the factors.
+    factors = factorization_algorithms[algo](n, max_iterations)
+    
+    # Raise an exception if the factors were not found.
+    if factors is None:
+        raise Exception(f"Factors not found after {max_iterations} iterations of the {algo} algorithm.")
+    return factors
+

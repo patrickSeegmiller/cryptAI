@@ -44,15 +44,35 @@ class NGramSimulatedAnnealing():
         """
         Computes the score of the current key by the sum of the squared differences between the expected and actual n-gram 
         relative frequencies.
-        """
-        
-         
 
+        """
+
+        # Compute the actual n-gram frequencies.
+        actual_ngram_frequencies = {}
+        for i in self.n:
+            actual_ngram_frequencies[i] = get_ngram_frequency(self.text, i)
+
+        # Compute the score.
+        score = 0
+        for i in self.n:
+            for ngram in self.expected_ngram_frequencies[i]:
+                score += (self.expected_ngram_frequencies[i][ngram] - actual_ngram_frequencies[i][ngram])**2
+
+        return score
 
     def get_next_state(self):
+        """
+        Returns the next state of the simulated annealing algorithm.
+
+        Returns:
+            dict: The next state of the simulated annealing algorithm.
+        
+        """
 
 
 
+
+class 
 
 
 
