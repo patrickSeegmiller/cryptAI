@@ -2,7 +2,7 @@
 import math
 import random
 
-from encryption_decryption.cryptanalytic_tools import compute_text_entropy, get_ngram_frequency, get_ngram_frequency_from_file, load_ngram_frequencies
+from cryptanalytic_tools import compute_text_entropy, get_ngram_frequency, get_ngram_frequency_from_file, load_ngram_frequencies
 
 class NGramSimulatedAnnealing():
     def __init__(self, text: str, n=[1, 2, 3, 4]) -> None:
@@ -60,22 +60,7 @@ class NGramSimulatedAnnealing():
 
         return score
 
-    def get_next_state(self):
-        """
-        Returns the next state of the simulated annealing algorithm.
-
-        Returns:
-            dict: The next state of the simulated annealing algorithm.
-        
-        """
-
-
-
-
-class 
-
-
-
+    
 
     
 

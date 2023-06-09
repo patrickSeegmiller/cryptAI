@@ -248,12 +248,12 @@ def get_factor_base(B, sieve='eratosthenes'):
         raise ValueError("B must be a positive integer.")
 
     # Use the selected sieve to generate the factor base
-    if sieve == 'eratosthenes':
-        return sieve_of_eratosthenes(B)
-    elif sieve == 'atkin':
+    if sieve == 'atkin':
         return sieve_of_atkin(B)
     elif sieve == 'sundaram':
         return sieve_of_sundaram(B)
+    else:
+        return sieve_of_eratosthenes(B)
 
 def greatest_common_divisor(a: int, b: int) -> int: # The Euclidean Algorithm
     """

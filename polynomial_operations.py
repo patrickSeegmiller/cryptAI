@@ -58,9 +58,11 @@ def synthetic_division(polynomial_coefficients: list[float], constant_term: floa
     # Return the coefficients of the resulting polynomial
     return resultant_coefficients
 
-def polynomial_long_division(dividend: list[float], divisor: list[float]) -> tuple[list[float], list[float]]:
+def polynomial_long_division(dividend: list[float], divisor: list[float]) -> list[tuple[float, int]]:
     """
-    Performs polynomial long division on a dividend and divisor given their coefficients.
+    Performs polynomial long division on a dividend and divisor given their coefficients, producing a list of tuples containing 
+    the nonzero coefficients of the quotient and remainder of the polynomial long division, both in descending order of degree, paired
+    with their respective degrees.
 
     Args:
         dividend (list[float]): The coefficients of the dividend in descending order of degree.
@@ -84,10 +86,17 @@ def polynomial_long_division(dividend: list[float], divisor: list[float]) -> tup
     quotient = []
     remainder = dividend
     while len(remainder) >= len(divisor):
-        # Calculate the next term of the quotient
-        quotient.append(remainder[0] / divisor[0])
-        # Calculate the next remainder
-        remainder = [remainder[i] - quotient[-1] * divisor[i] for i in range(len(divisor))] + remainder[len(divisor):]
+        # Determine the degree of the next term of the quotient
+        quotient_degree = len(remainder) - len(divisor)
+        
+        # Determine the coefficient of the next term of the quotient
+        quotient_coefficient = remainder[0] / divisor[0]
+
+        # Add the next term of the quotient to the quotient list
+        quotient.append((quotient_coefficient, quotient_degree))
+
+        # Subtract the next term of the quotient multiplied by the divisor from the remainder
+        remainder = [remainder[i] - quotient_coefficient * divisor[i] for i in range(len(divisor))] + remainder[len(divisor):]
 
     # Return the quotient and remainder
     return (quotient, remainder)
