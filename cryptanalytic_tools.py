@@ -412,20 +412,21 @@ def factorization_attack(n: int, algo='trial_division') -> tuple:
         raise Exception(f"Factors not found after {max_iterations} iterations of the {algo} algorithm.")
     return factors
 
-# A function that determines whether a text is in English or not.
-def word_pattern_is_english(text_word_patterns: str, threshold: float = 0.9) -> bool:
+# A function that determines whether a text is in English or not based solely on word pattern frequencies.
+def word_pattern_is_language(text_word_patterns: str, threshold: float = 0.9, language: str = "english") -> bool:
     """
-    Determines whether a text is in English or not by exploring the word patterns of the text and comparing them
-    to the word patterns of English words. The text is considered to be in English if the proportion of word patterns
-    that are found in the English dictionary is greater than or equal to the threshold.
+    Determines whether a text is in language or not by exploring the word patterns of the text and comparing them
+    to the word patterns of language words. The text is considered to be in the language if the proportion of word patterns
+    that are found in the language dictionary is greater than or equal to the threshold.
 
     Args:
         text_word_patterns (str): File path to a file containing the word patterns of the text to analyze.
-        threshold (float): The proportion of word patterns that must be found in the English dictionary for the text to be
-            considered English.
+        threshold (float): The proportion of word patterns that must be found in the language dictionary for the text to be
+            considered language. Defaults to 0.9.
+        language (str): The language to compare the text to. Defaults to "english".
     
     Returns:
-        bool: True if the text is in English, False otherwise.
+        bool: True if the text is written in language, False otherwise.
     
     Raises:
         ValueError: If text is not a non-empty string.
@@ -619,8 +620,38 @@ def get_word_pattern(word: str) -> str:
 def english_score(text: str) -> float:
     """
     Computes a score for a piece of text based on the frequency of the letters, bigrams, trigrams, and quadgrams in the text, as
-    well as the 
+    well as the english word patterns in the text. Wraps the letter_frequency_score, bigram_frequency_score, trigram_frequency_score,
+    quadgram_frequency_score, and word_pattern_score functions.
+
+    Args:
+        text (str): The text to compute the english score for.
+
+    Raises:
+        ValueError: If text is not a non-empty string.
+
     """
+    
+    # Check that text is a non-empty string.
+    if not isinstance(text, str) or text == "":
+        raise ValueError("text must be a non-empty string.")
+    
+    # Compute the letter frequency score.
+    letter_frequency_score = letter_frequency_score(text)
+    # Compute the bigram frequency score.
+    bigram_frequency_score = bigram_frequency_score(text)
+    # Compute the trigram frequency score.
+    trigram_frequency_score = trigram_frequency_score(text)
+    # Compute the quadgram frequency score.
+    quadgram_frequency_score = quadgram_frequency_score(text)
+    # Compute the word pattern score.
+    word_pattern_score = word_pattern_score(text)
+
+    # Compute the english score.
+    english_score = letter_frequency_score + bigram_frequency_score + trigram_frequency_score + quadgram_frequency_score + word_pattern_score
+
+    # Return the english score.
+    return english_score
+    
 
 def letter_frequency_score(text: str, language: str = 'english') -> float:
     """
@@ -852,21 +883,87 @@ def ciphertext_partition_word_pattern_score(ciphertext_partition: list[str]) -> 
     # Return the score.
     return score / len(ciphertext_partition)
 
-def generate_ciphertext_word_patterns(ciphertext: str, num_dicts: int) -> dict:
+def ciphertext_word_pattern(word_pattern_tree: list) -> float:
     """
-    Generates dictionaries of possible word patterns for substrings of different lengths of the ciphertext. Searches for
-    a dictionary that maximizes the english_score of the ciphertext by computing dictionaries for each of a collection
-    of random partitions of the ciphertext into substrings of different lengths. The top 10 scoring dictionaries are returned.
-
-    TODO: Adapt this to polyalphabetic and polygraphic ciphers.
+    Uses stochastic gradient descent to find the partition of the ciphertext that maximizes the word pattern score. The
+    score is computed by traversing the tree of word patterns and then computing the word pattern score from left to right
+    along the leaves of the tree.
 
     Args:
-        ciphertext (str): The ciphertext to analyze.
+        word_pattern_tree (list): The tree of word patterns to compute the word pattern score for.
+
+    Raises:
+        ValueError: If word_pattern_tree is not a non-empty list of dictionaries.
+
+    """
+
+    # Check that word_pattern_tree is a non-empty list of dictionaries.
+    if not isinstance(word_pattern_tree, list) or word_pattern_tree == []:
+        raise ValueError("word_pattern_tree must be a non-empty list.")
+    for node in word_pattern_tree:
+        if not isinstance(node, dict):
+            raise ValueError("word_pattern_tree must be a non-empty list of dictionaries.")
+        
+    # Initialize a variable to store the score.
+    score = 0
+
+    # Iterate over each node in the tree.
+    for node in word_pattern_tree:
+        # Check if the node has children.
+        if "children" in node:
+            # Recursively compute the word pattern score for the children of the node.
+            score += ciphertext_word_pattern(node["children"])
+        else:
+            # Compute the word pattern score for the node.
+            score += ciphertext_partition_word_pattern_score(node["pattern"])
+
+    # Return the score.
+    return score
+
+def generate_ciphertext_word_pattern_tree(ciphertext: str) -> list[dict]:
+    """
+    Constructs a tree of word patterns for the ciphertext. Each node in the tree is a dictionary with the following keys:
+
+    "pattern": The word pattern of the node.
+    "children": A list of dictionaries representing the children of the node.
+
+    Begins by partitioning the ciphertext into the largest substring-lengths that correspond to likely large
+    words from the word patterns dictionary. Then, for each partition, recursively construct a tree of word 
+    patterns for the partition using substrings of the partition that fit the pattern of an element in the 
+    word patterns dictionary.
+
+    Args:
+        ciphertext (str): The ciphertext to construct the word pattern tree for.
 
     Raises:
         ValueError: If ciphertext is not a non-empty string.
+
+    TODO: Come up with a way to adapt this to polyalphabetic and polygraphic ciphers.
     
     """
+
+    # Check that ciphertext is a non-empty string.
+    if not isinstance(ciphertext, str) or ciphertext == "":
+        raise ValueError("ciphertext must be a non-empty string.")
+    
+    # Import the random module.
+    import random
+
+    # Load the word patterns dictionary.
+    word_patterns = load_word_patterns()
+
+    # Initialize a list to store the tree.
+    tree = []
+
+    # Initialize a list to store the substrings of the ciphertext.
+    substrings = []
+
+    # Identify the largest likely substring-length that is in the word patterns dictionary.
+
+
+    
+
+
 
 
 
