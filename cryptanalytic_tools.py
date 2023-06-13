@@ -413,7 +413,7 @@ def factorization_attack(n: int, algo='trial_division') -> tuple:
     return factors
 
 # A function that determines whether a text is in English or not based solely on word pattern frequencies.
-def word_pattern_is_language(text_word_patterns: str, threshold: float = 0.9, language: str = "english") -> bool:
+def is_language_word_pattern(text_word_patterns: str, threshold: float = 0.9, language: str = "english") -> bool:
     """
     Determines whether a text is in language or not by exploring the word patterns of the text and comparing them
     to the word patterns of language words. The text is considered to be in the language if the proportion of word patterns
@@ -456,78 +456,36 @@ def word_pattern_is_language(text_word_patterns: str, threshold: float = 0.9, la
     # Return True if the proportion of word patterns that are found in the English dictionary is greater than or equal to the threshold.
     return num_english_word_patterns / len(text_word_patterns) >= threshold
 
-def load_word_patterns():
+def load_word_patterns(language: str = "english") -> dict:
     """
-    Loads the dictionary of English word patterns from the english_word_patterns.txt file.
+    Loads the dictionary of word patterns for the specified language from a JSON file.
 
     Raises:
-        FileNotFoundError: If the english_word_patterns.txt file is not found.
+        FileNotFoundError: If the word patterns file is not found.
 
-    """
-
-    # Initialize a dictionary to store the word patterns.
-    word_patterns = {}
-
-    try:
-        # Open the file and iterate over each line.
-        with open("english_text_tools/english_word_patterns.txt" , "r") as file:
-            for line in file:
-                # Split the line into the pattern and the number of words with that pattern.
-                pattern, num_words = line.split(", ")
-                # Add the pattern and the number of words with that pattern to the dictionary.
-                word_patterns[pattern] = int(num_words)
-    except FileNotFoundError:
-        raise FileNotFoundError("english_word_patterns.txt file not found.")
-    
-    # Return the dictionary of word patterns.
-    return word_patterns
-
-def word_patterns_to_json(text_file: str):
-    """
-    Generates a JSON file containing the word patterns of the words in the text file.
-
-    Args:
-        text_file (str): The text file to analyze.
-
-    Raises:
-        ValueError: If text_file is not a non-empty string.
-    
     """
 
     # Import json.
     import json
 
-    # Check that text_file is a non-empty string.
-    if not isinstance(text_file, str) or len(text_file) == 0:
-        raise ValueError("text_file must be a non-empty string.")
-    
     # Initialize a dictionary to store the word patterns.
     word_patterns = {}
 
-    # Open the text file and iterate over each line.
-    with open(text_file, "r") as file:
-        for line in file:
-            # Split the line into words.
-            words = line.split()
-            # Iterate over each word.
-            for word in words:
-                # Get the word pattern of the word.
-                pattern = get_word_pattern(word)
-                # Add the word pattern to the dictionary.
-                if pattern in word_patterns:
-                    word_patterns[pattern] += 1
-                else:
-                    word_patterns[pattern] = 1
+    try:
+        # Open the JSON file containing the word patterns.
+        with open(f"word_patterns/{language}.json", "r") as file:
+            # Load the word patterns into the dictionary.
+            word_patterns = json.load(file)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Word patterns file for {language} not found.")
+    
+    # Return the dictionary of word patterns.
+    return word_patterns
 
-    # Open the JSON file and write the word patterns to it.
-    with open("english_text_tools/word_patterns.json", "w") as file:
-        json.dump(word_patterns, file)
-
-
-def generate_word_patterns(text_file_path: str, word_pattern_file_path: str):
+def generate_word_patterns(text_file_path: str, json: bool="True") -> None:
     """
-    Generates a dictionary of English word patterns for use to generate a master file of wordpatterns as well
-    as with the is_english function. 
+    Generates dictionares of English word patterns and their counts for use to generate a master file of word
+    patterns, as well as with the is_english function. 
     
     The patterns are strings of digits where each unique digit represents a distinct letter in the alphabet. For example, 
     the word pattern "0120" represents any four letter word where the first and last letters are the same, 
@@ -540,7 +498,7 @@ def generate_word_patterns(text_file_path: str, word_pattern_file_path: str):
 
     Args:
         text_file_path (str): The path to the text file to be used to generate the word patterns.
-        word_pattern_file_path (str): The path to the file to store the word patterns.
+        json (bool): Whether to save the word patterns as a JSON file. Defaults to True.
 
     Raises:
         ValueError: If text_file_path is not a non-empty string.
@@ -550,12 +508,12 @@ def generate_word_patterns(text_file_path: str, word_pattern_file_path: str):
     # Check that text_file_path is a non-empty string.
     if not isinstance(text_file_path, str) or text_file_path == "":
         raise ValueError("text_file_path must be a non-empty string.")
-    # Check that word_pattern_file_path is a non-empty string.
-    if not isinstance(word_pattern_file_path, str) or word_pattern_file_path == "":
-        raise ValueError("word_pattern_file_path must be a non-empty string.")
     
     # Initialize a dictionary to store the word patterns.
     word_patterns = {}
+
+    # Initialize a dictionary to store the words with each pattern.
+    pattern_words = {}
 
     # Open the text file and iterate over each line.
     with open(text_file_path, "r") as file:
@@ -571,17 +529,38 @@ def generate_word_patterns(text_file_path: str, word_pattern_file_path: str):
             for word in words:
                 # Get the pattern of the word
                 pattern = get_word_pattern(word)
-                # Add the pattern to the word_patterns dictionary.
+                # Add the pattern to the word_patterns dictionary and the word to the pattern_words.
                 if pattern in word_patterns:
                     word_patterns[pattern] += 1
+                    pattern_words[pattern].append(word)
                 else:
                     word_patterns[pattern] = 1
 
-    # Open the word pattern file and write the word patterns to it.
+    # If json is True, write the word patterns to a JSON file.
+    if json:
+        # Import json.
+        import json
+
+        # Create a file path for the JSON file.
+        json_file_path = text_file_path.replace(".txt", "_word_patterns.json")
+
+        # Open the JSON file and write the word patterns to it.
+        with open(json_file_path, "w") as file:
+            json.dump(word_patterns, file)
+
+        # Return from the function.
+        return
+    
+    # Creates a word pattern file path based on the text file path.
+    word_pattern_file_path = text_file_path.replace(".txt", "_word_patterns.txt")
+
+    # Write word patterns, the words they represent, and the number of words they represent to the word pattern file.
     with open(word_pattern_file_path, "w") as file:
         for pattern in word_patterns:
-            file.write(f"{pattern} {word_patterns[pattern]}\n")
+            file.write(f"{pattern}, {word_patterns[pattern]}, {pattern_words[pattern]}\n")
 
+    return
+    
 def get_word_pattern(word: str) -> str:
     """
     Produces the word pattern for a single word. The pattern is a string of digits where each unique digit represents a distinct
@@ -651,7 +630,6 @@ def english_score(text: str) -> float:
 
     # Return the english score.
     return english_score
-    
 
 def letter_frequency_score(text: str, language: str = 'english') -> float:
     """
@@ -883,43 +861,6 @@ def ciphertext_partition_word_pattern_score(ciphertext_partition: list[str]) -> 
     # Return the score.
     return score / len(ciphertext_partition)
 
-def ciphertext_word_pattern(word_pattern_tree: list) -> float:
-    """
-    Uses stochastic gradient descent to find the partition of the ciphertext that maximizes the word pattern score. The
-    score is computed by traversing the tree of word patterns and then computing the word pattern score from left to right
-    along the leaves of the tree.
-
-    Args:
-        word_pattern_tree (list): The tree of word patterns to compute the word pattern score for.
-
-    Raises:
-        ValueError: If word_pattern_tree is not a non-empty list of dictionaries.
-
-    """
-
-    # Check that word_pattern_tree is a non-empty list of dictionaries.
-    if not isinstance(word_pattern_tree, list) or word_pattern_tree == []:
-        raise ValueError("word_pattern_tree must be a non-empty list.")
-    for node in word_pattern_tree:
-        if not isinstance(node, dict):
-            raise ValueError("word_pattern_tree must be a non-empty list of dictionaries.")
-        
-    # Initialize a variable to store the score.
-    score = 0
-
-    # Iterate over each node in the tree.
-    for node in word_pattern_tree:
-        # Check if the node has children.
-        if "children" in node:
-            # Recursively compute the word pattern score for the children of the node.
-            score += ciphertext_word_pattern(node["children"])
-        else:
-            # Compute the word pattern score for the node.
-            score += ciphertext_partition_word_pattern_score(node["pattern"])
-
-    # Return the score.
-    return score
-
 def generate_ciphertext_word_pattern_tree(ciphertext: str) -> list[dict]:
     """
     Constructs a tree of word patterns for the ciphertext. Each node in the tree is a dictionary with the following keys:
@@ -927,10 +868,9 @@ def generate_ciphertext_word_pattern_tree(ciphertext: str) -> list[dict]:
     "pattern": The word pattern of the node.
     "children": A list of dictionaries representing the children of the node.
 
-    Begins by partitioning the ciphertext into the largest substring-lengths that correspond to likely large
-    words from the word patterns dictionary. Then, for each partition, recursively construct a tree of word 
-    patterns for the partition using substrings of the partition that fit the pattern of an element in the 
-    word patterns dictionary.
+    Begins by randomly partitioning the ciphertext into large, likely substrings from the word pattern dictionary. 
+    Then, for each substring, recursively randomly partition it into smaller substrings until the substrings in the 
+    tree are all in the word pattern dictionary.
 
     Args:
         ciphertext (str): The ciphertext to construct the word pattern tree for.
@@ -955,10 +895,100 @@ def generate_ciphertext_word_pattern_tree(ciphertext: str) -> list[dict]:
     # Initialize a list to store the tree.
     tree = []
 
-    # Initialize a list to store the substrings of the ciphertext.
-    substrings = []
+    # Perform a random partition of the ciphertext into large, likely substrings from the word pattern dictionary.
+    ciphertext_partition = random_partition(ciphertext, word_patterns)
 
-    # Identify the largest likely substring-length that is in the word patterns dictionary.
+    # Iterate over each substring in the partition.
+    for substring in ciphertext_partition:
+        # Randomly partition the substring into smaller substrings until the substrings are all in the word pattern dictionary.
+        substring_partition = random_partition(substring, word_patterns)
+        # Initialize a list to store the children of the substring.
+        children = []
+
+def random_text_partition(text: str, language: str = "english") -> list[str]:
+    """
+    Randomly partitions a text into a sequence of substrings that all have word patterns in the word patterns dictionary. 
+    As the word patterns assume a one-to-one correspondence between ciphertext letters and plaintext letters, substrings
+    should be contiguous.
+
+    Args:
+        text (str): The text to partition.
+        language (str): The language to use to partition the text. Defaults to 'english'.
+
+    Raises:
+        ValueError: If text is not a non-empty string.
+        ValueError: If language is not a non-empty string.
+
+    Returns:
+        list[str]: A list of sequential substrings that all have word patterns in the word patterns dictionary.
+    
+    """
+
+    # Check that text is a non-empty string.
+    if not isinstance(text, str) or text == "":
+        raise ValueError("text must be a non-empty string.")
+    # Check that language is a non-empty string.
+    if not isinstance(language, str) or language == "":
+        raise ValueError("language must be a non-empty string.")
+    
+    # Import the random module.
+    import random
+
+def word_pattern_count(text_file: str, language: str = "english") -> dict[str, int]:
+    """
+    Counts the number of times each word pattern in the word patterns dictionary appears in the text file.
+
+    Args:
+        text_file (str): The text file to count the word patterns in.
+        language (str): The language to use to count the word patterns. Defaults to 'english'.
+
+    Raises:
+        ValueError: If text_file is not a non-empty string.
+        ValueError: If language is not a non-empty string.
+
+    Returns:
+        dict[str, int]: A dictionary mapping each word pattern in the word patterns dictionary to the number of 
+        times it appears in the text file.
+    
+    """
+
+
+
+def word_pattern_relative_frequencies(file_path: str, language: str = "english") -> dict[str, int]:
+    """
+    Computes the relative frequency of each a word pattern dictionary's word patterns in each text in file_path. 
+    Used in conjunctino with word_pattern_count to generate expected word pattern relative frequencies for a language.
+
+    Args:
+        file_path (str): The path to the directory containing the texts to compute the word pattern relative frequencies for.
+        language (str): The language to use to compute the word pattern frequencies. Defaults to 'english'.
+
+    Raises:
+        ValueError: If text_file is not a non-empty string.
+        ValueError: If language is not a non-empty string.
+    
+    Returns:
+        dict[str, int]: A dictionary mapping each word pattern in the word patterns dictionary to the relative frequency
+        of that word pattern in the texts in file_path.
+    
+    """
+
+    # Check that file_path is a non-empty string.
+    if not isinstance(file_path, str) or file_path == "":
+        raise ValueError("file_path must be a non-empty string.")
+    
+    # Check that language is a non-empty string.
+    if not isinstance(language, str) or language == "":
+        raise ValueError("language must be a non-empty string.")
+    
+    # Import the os module.
+    import os
+
+    # Iterate over each text file in file_path, counting how many times each word
+
+    
+
+
 
 
     
