@@ -786,5 +786,14 @@ class DoubleColumnarTransposition(Cipher):
 class ADFGXCipher(Cipher):
     def __init__(self) -> None:
         """
-        Creates an ADFGX Cipher object.
+        Creates an ADFGX Cipher object. The ADFGX Cipher is a fractionating transposition cipher that uses a 5x5 Polybius Square
+        to encrypt a message. It was used by the German Army during World War I. The key is a word or phrase that is used to
+        generate the Polybius Square, in this case, a 5x5 grid of letters derived from the word 
         """
+
+class ADFGVXCipher(Cipher):
+    def __init__(self) -> None:
+        """
+        Creates an 
+        """
+        pass

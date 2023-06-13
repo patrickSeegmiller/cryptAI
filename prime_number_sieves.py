@@ -48,3 +48,25 @@ def sieve_of_sundaram(N: int) -> list[int]:
     
     #TODO: Implement Sieve of Sundaram algorithm
     return []
+
+
+def sieve_of_atkin(N: int) -> list[int]:
+    """
+    Generates a list of prime numbers up less than N using the Sieve of
+    Atkin algorithm.
+    
+    Args:
+        N (int): The limit up to which prime numbers should be generated.
+        
+    Returns:
+        list: A list of prime numbers up to N.
+        
+    Raises:
+        ValueError: If N is not an integer greater than 1.
+    """
+
+    # Check that N is an integer greater than 1.
+    if N < 2 or not isinstance(N, int):
+        raise ValueError("N must be an integer greater than 1.")
+
+    # TODO: Implement Sieve of Atkin algorithm

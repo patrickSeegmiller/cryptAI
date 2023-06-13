@@ -412,3 +412,102 @@ def factorization_attack(n: int, algo='trial_division') -> tuple:
         raise Exception(f"Factors not found after {max_iterations} iterations of the {algo} algorithm.")
     return factors
 
+# A function that determines whether a text is in English or not.
+def is_english(text: str, ngram_frequencies: dict, threshold: float = 0.9) -> bool:
+    """
+    """
+
+def generate_word_patterns(text_file_path: str, word_pattern_file_path: str):
+    """
+    Generates a dictionary of English word patterns for use to generate a master file of wordpatterns as well
+    as with the is_english function. 
+    
+    The patterns are strings of digits where each unique digit represents a distinct letter in the alphabet. For example, 
+    the word pattern "0120" represents any four letter word where the first and last letters are the same, 
+    and the middle two letters are both different from the first and last letters, like "that" or "barb". In like manner, 
+    the pattern "010" represents any three letter word where the first and last letters are the same, like "bob" or "dad".
+
+    The patterns are stored in a dictionary with the pattern as the key and the number of words in the English dictionary
+    with that pattern as the value. For example, the pattern "0" has a value of 2, since there are two words in the English
+    dictionary with that pattern, "a" and "I".
+
+    Args:
+        text_file_path (str): The path to the text file to be used to generate the word patterns.
+        word_pattern_file_path (str): The path to the file to store the word patterns.
+
+    Raises:
+        ValueError: If text_file_path is not a non-empty string.
+        ValueError: If word_pattern_file_path is not a non-empty string.
+    """
+
+    # Check that text_file_path is a non-empty string.
+    if not isinstance(text_file_path, str) or text_file_path == "":
+        raise ValueError("text_file_path must be a non-empty string.")
+    # Check that word_pattern_file_path is a non-empty string.
+    if not isinstance(word_pattern_file_path, str) or word_pattern_file_path == "":
+        raise ValueError("word_pattern_file_path must be a non-empty string.")
+    
+    # Initialize a dictionary to store the word patterns.
+    word_patterns = {}
+
+    # Open the text file and iterate over each line.
+    with open(text_file_path, "r") as file:
+        for line in file:
+            # Strip the newline character from the line.
+            line = line.strip()
+            # Skip the line if it is empty.
+            if line == "":
+                continue
+            # Split the line into a list of words.
+            words = line.split(" ")
+            # Iterate over each word in the list.
+            for word in words:
+                # Get the pattern of the word
+                pattern = get_word_pattern(word)
+                # Add the pattern to the word_patterns dictionary.
+                if pattern in word_patterns:
+                    word_patterns[pattern] += 1
+                else:
+                    word_patterns[pattern] = 1
+
+    # Open the word pattern file and write the word patterns to it.
+    with open(word_pattern_file_path, "w") as file:
+        for pattern in word_patterns:
+            file.write(f"{pattern} {word_patterns[pattern]}\n")
+
+def get_word_pattern(word: str) -> str:
+    """
+    Produces the word pattern for a single word. The pattern is a string of digits where each unique digit represents a distinct
+    letter in the alphabet. For example, the word pattern "0120" represents any four letter word where the first and last letters
+    are the same, and the middle two letters are both different from the first and last letters, like "that" or "barb". In like
+    manner, the pattern "010" represents any three letter word where the first and last letters are the same, like "bob" or "dad".
+
+    Args:
+        word (str): The word to produce the word pattern for.
+
+    Raises:
+        ValueError: If word is not a non-empty string.
+    """
+
+    # Import the regular expressions module.
+    import re
+
+    # Check that word is a non-empty string.
+    if not isinstance(word, str) or word == "":
+        raise ValueError("word must be a non-empty string.")
+    
+    # Convert the word to lowercase.
+    word = word.lower()
+
+    # Remove non-alphabetic characters from the word.
+    word = re.sub(r"[^a-z]", "", word)
+
+    # Iterate over each letter in the word and replace it with a unique digit.
+    for letter in word:
+        # Replace the letter with a unique digit.
+        word = word.replace(letter, str(word.index(letter)))
+
+    # Return the word pattern.
+    return word
+
+

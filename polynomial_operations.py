@@ -82,10 +82,62 @@ def polynomial_long_division(dividend: list[float], divisor: list[float]) -> lis
     if not isinstance(divisor, list) or not all(isinstance(coeff, int) for coeff in divisor):
         raise ValueError("Divisor coefficients must be a list of integers or floats.")
     
+    #TODO: Check this function for correctness and test it
+
     # Perform polynomial long division
     quotient = []
     remainder = dividend
     while len(remainder) >= len(divisor):
+        # Determine the degree of the next term of the quotient
+        quotient_degree = len(remainder) - len(divisor)
+        
+        # Determine the coefficient of the next term of the quotient
+        quotient_coefficient = remainder[0] / divisor[0]
+
+        # Add the next term of the quotient to the quotient list
+        quotient.append((quotient_coefficient, quotient_degree))
+
+        # Subtract the next term of the quotient multiplied by the divisor from the remainder
+        remainder = [remainder[i] - quotient_coefficient * divisor[i] for i in range(len(divisor))] + remainder[len(divisor):]
+
+    # Return the quotient and remainder
+    return (quotient, remainder)
+
+def infinite_polynomial_long_division(dividend: list[float], divisor: list[float], num_terms: int) -> list[tuple[float, int]]:
+    """
+    A functiont that produces the first num_terms terms of the quotient of a polynomial long division. For use
+    in quotients involving infinite series.
+
+    Args:
+        dividend (list[float]): The coefficients of the dividend in descending order of degree.
+        divisor (list[float]): The coefficients of the divisor in descending order of degree.
+        num_terms (int): The maximum degree of the quotient to be produced.
+
+    Returns:
+        tuple[list[float], list[float]]: A tuple containing the coefficients of the quotient and remainder of the
+        polynomial long division, both in descending order of degree.
+
+    Raises:
+        ValueError: If dividend or divisor are not lists of floats or integers.
+        ValueError: If num_terms is not an integer.
+    
+    """
+
+    # First, check that the input is valid by checking that dividend and divisor are lists of integers.
+    if not isinstance(dividend, list) or not all(isinstance(coeff, (int, float)) for coeff in dividend):
+        raise ValueError("Dividend coefficients must be a list of integers or floats.")
+    if not isinstance(divisor, list) or not all(isinstance(coeff, (int, float)) for coeff in divisor):
+        raise ValueError("Divisor coefficients must be a list of integers or floats.")
+    if not isinstance(num_terms, int):
+        raise ValueError("Number of terms must be an integer.")
+    
+
+    #TODO Check this function for correctness and test it
+
+    # Perform polynomial long division
+    quotient = []
+    remainder = dividend
+    for i in range(num_terms):
         # Determine the degree of the next term of the quotient
         quotient_degree = len(remainder) - len(divisor)
         
