@@ -329,15 +329,12 @@ def generate_ngram_frequencies(file_path: str, n=[1, 2, 3, 4]) -> None:
 
 def load_ngram_frequencies(file_path: str) -> dict:
     """
-    Loads a dictionary containing the relative frequency distribution of n-grams from a file. The file consists of
-    four sections sepearated by a line containing only the character "#". The first section contains the
-    frequency distribution of unigrams, the second section contains the frequency distribution of bigrams,
-    the third section contains the frequency distribution of trigrams, and the fourth section contains the
-    frequency distribution of quadgrams. The format of each section is as follows:
+    Loads a dictionary containing the relative frequency distribution of n-grams from a file. The format of 
+    is as follows:
         n-gram, relative_frequency
         n-gram, relative_frequency
         ...
-    Only the 20 most common n-grams are included in the file for n-grams of length greater than one.
+    Only the 20 most common n-grams are included in the file for n-grams of length greater than one (for now!).
     """
 
     # Check that file_path is a string.
@@ -951,8 +948,6 @@ def word_pattern_count(text_file: str, language: str = "english") -> dict[str, i
         times it appears in the text file.
     
     """
-
-
 
 def word_pattern_relative_frequencies(file_path: str, language: str = "english") -> dict[str, int]:
     """
