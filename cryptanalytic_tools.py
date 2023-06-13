@@ -413,9 +413,115 @@ def factorization_attack(n: int, algo='trial_division') -> tuple:
     return factors
 
 # A function that determines whether a text is in English or not.
-def is_english(text: str, ngram_frequencies: dict, threshold: float = 0.9) -> bool:
+def word_pattern_is_english(text_word_patterns: str, threshold: float = 0.9) -> bool:
     """
+    Determines whether a text is in English or not by exploring the word patterns of the text and comparing them
+    to the word patterns of English words. The text is considered to be in English if the proportion of word patterns
+    that are found in the English dictionary is greater than or equal to the threshold.
+
+    Args:
+        text_word_patterns (str): File path to a file containing the word patterns of the text to analyze.
+        threshold (float): The proportion of word patterns that must be found in the English dictionary for the text to be
+            considered English.
+    
+    Returns:
+        bool: True if the text is in English, False otherwise.
+    
+    Raises:
+        ValueError: If text is not a non-empty string.
+        ValueError: If the threshold is not a float between 0 and 1.
+    
     """
+    # Check that text is a non-empty string.
+    if not isinstance(text_word_patterns, str) or len(text_word_patterns) == 0:
+        raise ValueError("text must be a non-empty string.")
+    # Check that threshold is a float between 0 and 1.
+    if not isinstance(threshold, float) or threshold < 0 or threshold > 1:
+        raise ValueError("threshold must be a float between 0 and 1.")
+    
+    # Load the dictionary of English word patterns.
+    english_word_patterns = load_word_patterns()
+
+    # Initialize a counter to count the number of word patterns that are found in the English dictionary.
+    num_english_word_patterns = 0
+
+    # Open the file containing the word patterns of the text to analyze and iterate over each line.
+    with open(text_word_patterns, "r") as file:
+        for line in file:
+            # If the word pattern is found in the English dictionary, increment the counter.
+            if line in english_word_patterns:
+                num_english_word_patterns += 1
+
+    # Return True if the proportion of word patterns that are found in the English dictionary is greater than or equal to the threshold.
+    return num_english_word_patterns / len(text_word_patterns) >= threshold
+
+def load_word_patterns():
+    """
+    Loads the dictionary of English word patterns from the english_word_patterns.txt file.
+
+    Raises:
+        FileNotFoundError: If the english_word_patterns.txt file is not found.
+
+    """
+
+    # Initialize a dictionary to store the word patterns.
+    word_patterns = {}
+
+    try:
+        # Open the file and iterate over each line.
+        with open("english_text_tools/english_word_patterns.txt" , "r") as file:
+            for line in file:
+                # Split the line into the pattern and the number of words with that pattern.
+                pattern, num_words = line.split(", ")
+                # Add the pattern and the number of words with that pattern to the dictionary.
+                word_patterns[pattern] = int(num_words)
+    except FileNotFoundError:
+        raise FileNotFoundError("english_word_patterns.txt file not found.")
+    
+    # Return the dictionary of word patterns.
+    return word_patterns
+
+def word_patterns_to_json(text_file: str):
+    """
+    Generates a JSON file containing the word patterns of the words in the text file.
+
+    Args:
+        text_file (str): The text file to analyze.
+
+    Raises:
+        ValueError: If text_file is not a non-empty string.
+    
+    """
+
+    # Import json.
+    import json
+
+    # Check that text_file is a non-empty string.
+    if not isinstance(text_file, str) or len(text_file) == 0:
+        raise ValueError("text_file must be a non-empty string.")
+    
+    # Initialize a dictionary to store the word patterns.
+    word_patterns = {}
+
+    # Open the text file and iterate over each line.
+    with open(text_file, "r") as file:
+        for line in file:
+            # Split the line into words.
+            words = line.split()
+            # Iterate over each word.
+            for word in words:
+                # Get the word pattern of the word.
+                pattern = get_word_pattern(word)
+                # Add the word pattern to the dictionary.
+                if pattern in word_patterns:
+                    word_patterns[pattern] += 1
+                else:
+                    word_patterns[pattern] = 1
+
+    # Open the JSON file and write the word patterns to it.
+    with open("english_text_tools/word_patterns.json", "w") as file:
+        json.dump(word_patterns, file)
+
 
 def generate_word_patterns(text_file_path: str, word_pattern_file_path: str):
     """
@@ -509,5 +615,30 @@ def get_word_pattern(word: str) -> str:
 
     # Return the word pattern.
     return word
+
+def english_score(text: str) -> float:
+    """
+    Computes a score for a piece of text based on the frequency of the letters, bigrams, trigrams, and quadgrams in the text as
+    well as the 
+    """
+
+def generate_ciphertext_word_patterns(ciphertext: str) -> dict:
+    """
+    Generates dictionaries of possible word patterns for substrings of different lengths of the ciphertext. Searches for
+    a dictionary that maximizes the english_score of the ciphertext by computing possible dictionaries for each of a collection
+    of random partitions of the ciphertext (into substrings of different lengths). The top 10 scoring dictionaries are returned.
+
+    TODO: Adapt this to polyalphabetic and polygraphic ciphers.
+
+    Args:
+        ciphertext (str): The ciphertext to analyze.
+
+    Raises:
+        ValueError: If ciphertext is not a non-empty string.
+    
+    """
+
+
+
 
 
