@@ -300,7 +300,7 @@ def integer_sqrt(N: int or float) -> int:
     """
 
     # Input validation
-    if not isinstance(N, int) or not isinstance(N, float) or N < 0:
+    if (not isinstance(N, int) and not isinstance(N, float)) or N < 0:
         raise ValueError("N must be a non-negative integer.")
 
     # Maximum number of iterations

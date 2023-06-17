@@ -2,7 +2,7 @@ import math
 
 from whole_number_operations import integer_sqrt
 from prime_number_sieves import sieve_of_eratosthenes
-from factorization_methods import fermat_factorization, trial_division_factorization, pollard_rho_factorization, pollard_p_1_factorization, williams_p_1_factorization, quadratic_sieve_factorization, shanks_square_forms_factorization, rational_sieve, general_number_field_sieve
+from factorization_methods import fermat_factorization, trial_division_factorization, pollard_rho_factorization, pollard_p_1_factorization, williams_p_1_factorization#, quadratic_sieve_factorization, shanks_square_forms_factorization, rational_sieve, general_number_field_sieve
 
 def index_of_coincidence(text):
     """
@@ -147,12 +147,21 @@ def get_ngram_frequency(text: str, n: int) -> dict:
 
     """
 
+    # Import the regular expressions module.
+    import re
+
     # Check that text is a string and n is a positive integer.
     if not isinstance(text, str) or not isinstance(n, int) or n <= 0:
         raise ValueError("text must be a string and n must be a positive integer.")
     
     # Initialize a dictionary to store the frequency distribution of n-grams.
     frequency_distribution = {}
+
+    # Convert the text to lowercase.
+    text = text.lower()
+
+    # Remove all non-alphabetic characters from the text.
+    text = re.sub(r"[^a-z]", "", text)
 
     # Iterate over each n-gram in the text, adding it to the dictionary or
     # incrementing its count if it already exists.
@@ -163,6 +172,10 @@ def get_ngram_frequency(text: str, n: int) -> dict:
         else:
             frequency_distribution[n_gram] = 1
 
+    # Convert frequecies to relative frequencies.
+    for n_gram in frequency_distribution:
+        frequency_distribution[n_gram] /= len(text)
+        
     # Return the frequency distribution dictionary.
     return frequency_distribution
 
@@ -182,6 +195,7 @@ def get_ngram_frequency_from_file(file_path: str, n: int) -> dict:
         ValueError: If file_path is not a string or n is not a positive integer.
 
     """
+    import re
 
     # Check that file_path is a string and n is a positive integer.
     if not isinstance(file_path, str) or not isinstance(n, int) or n <= 0:
@@ -195,12 +209,30 @@ def get_ngram_frequency_from_file(file_path: str, n: int) -> dict:
         for line in file:
             # Iterate over each n-gram in the line, adding it to the dictionary or
             # incrementing its count if it already exists.
-            for i in range(len(line) - n + 1):
-                n_gram = line[i:i+n]
-                if n_gram in frequency_distribution:
-                    frequency_distribution[n_gram] += 1
-                else:
-                    frequency_distribution[n_gram] = 1
+
+            # Convert the line to lowercase.
+            line = line.lower()
+
+            # Remove all non-alphabetic characters from the line.
+            line = re.sub(r"[^a-z]", "", line)
+
+            # Split the line into words
+            line = line.split()
+
+            # Iterate over each word in the line.
+            for word in line:
+                # Iterate over each n-gram in the word.
+                for i in range(len(word) - n + 1):
+                    n_gram = word[i:i+n]
+                    if n_gram in frequency_distribution:
+                        frequency_distribution[n_gram] += 1
+                    else:
+                        frequency_distribution[n_gram] = 1
+
+    # Convert frequencies to relative frequencies.
+    total = sum(frequency_distribution.values())
+    for n_gram in frequency_distribution:
+        frequency_distribution[n_gram] /= total
 
     # Return the frequency distribution dictionary.
     return frequency_distribution
