@@ -2,6 +2,7 @@ import math
 
 from whole_number_operations import integer_sqrt
 from prime_number_sieves import sieve_of_eratosthenes
+from ngram_tools import get_ngram_frequency_from_file, get_ngram_frequency
 from factorization_methods import fermat_factorization, trial_division_factorization, pollard_rho_factorization, pollard_p_1_factorization, williams_p_1_factorization#, quadratic_sieve_factorization, shanks_square_forms_factorization, rational_sieve, general_number_field_sieve
 
 def index_of_coincidence(text):
@@ -127,179 +128,6 @@ def get_prime_factorization(n: int) -> list[tuple]:
 
     # Return the prime factorization list.
     return prime_factorization
-
-def get_ngram_frequency(text: str, n: int) -> dict:
-    """
-    Computes and returns the frequency distribution of n-grams from a string of text, where n is the number of
-    characters in each n-gram. This is particularly useful for cracking monoalphabetic, polyalphabetic,
-    polygraphic, and columnar transposition ciphers, especially when used in conjunction with metaheuristic
-    algorithms such as simulated annealing.
-
-    Args:
-        text (str): The text to compute the frequency distribution of.
-        n (int): The number of characters in each n-gram.
-
-    Returns:
-        dict: A dictionary containing the frequency distribution of n-grams.
-
-    Raises:
-        ValueError: If text is not a string or n is not a positive integer.
-
-    """
-
-    # Import the regular expressions module.
-    import re
-
-    # Check that text is a string and n is a positive integer.
-    if not isinstance(text, str) or not isinstance(n, int) or n <= 0:
-        raise ValueError("text must be a string and n must be a positive integer.")
-    
-    # Initialize a dictionary to store the frequency distribution of n-grams.
-    frequency_distribution = {}
-
-    # Convert the text to lowercase.
-    text = text.lower()
-
-    # Remove all non-alphabetic characters from the text.
-    text = re.sub(r"[^a-z]", "", text)
-
-    # Iterate over each n-gram in the text, adding it to the dictionary or
-    # incrementing its count if it already exists.
-    for i in range(len(text) - n + 1):
-        n_gram = text[i:i+n]
-        if n_gram in frequency_distribution:
-            frequency_distribution[n_gram] += 1
-        else:
-            frequency_distribution[n_gram] = 1
-
-    # Convert frequecies to relative frequencies.
-    for n_gram in frequency_distribution:
-        frequency_distribution[n_gram] /= len(text)
-        
-    # Return the frequency distribution dictionary.
-    return frequency_distribution
-
-def get_ngram_frequency_from_file(file_path: str, n: int) -> dict:
-    """
-    Computes and returns the frequency distribution of n-grams from a file, where n is the number of
-    characters in each n-gram. See get_ngram_frequency for more information.
-
-    Args:
-        file_path (str): The path to the file to compute the frequency distribution of.
-        n (int): The number of characters in each n-gram.
-
-    Returns:
-        dict: A dictionary containing the frequency distribution of n-grams.
-
-    Raises:
-        ValueError: If file_path is not a string or n is not a positive integer.
-
-    """
-    import re
-
-    # Check that file_path is a string and n is a positive integer.
-    if not isinstance(file_path, str) or not isinstance(n, int) or n <= 0:
-        raise ValueError("file_path must be a string and n must be a positive integer.")
-    
-    # Initialize a dictionary to store the frequency distribution of n-grams.
-    frequency_distribution = {}
-
-    # Open the file and iterate over each line.
-    with open(file_path, "r") as file:
-        for line in file:
-            # Iterate over each n-gram in the line, adding it to the dictionary or
-            # incrementing its count if it already exists.
-
-            # Convert the line to lowercase.
-            line = line.lower()
-
-            # Remove all non-alphabetic characters from the line.
-            line = re.sub(r"[^a-z]", "", line)
-
-            # Split the line into words
-            line = line.split()
-
-            # Iterate over each word in the line.
-            for word in line:
-                # Iterate over each n-gram in the word.
-                for i in range(len(word) - n + 1):
-                    n_gram = word[i:i+n]
-                    if n_gram in frequency_distribution:
-                        frequency_distribution[n_gram] += 1
-                    else:
-                        frequency_distribution[n_gram] = 1
-
-    # Convert frequencies to relative frequencies.
-    total = sum(frequency_distribution.values())
-    for n_gram in frequency_distribution:
-        frequency_distribution[n_gram] /= total
-
-    # Return the frequency distribution dictionary.
-    return frequency_distribution
-
-def compute_text_entropy(text: str) -> float:
-    """
-    Computes and returns the Shannon entropy of a string of text. This is useful for
-    determining whether a string of text is encrypted or not.
-
-    Args:
-        text (str): The text to compute the entropy of.
-
-    Returns:
-        float: The Shannon entropy of the text.
-
-    Raises:
-        ValueError: If text is not a string.
-
-    """
-
-    #Check that text is a string.
-    if not isinstance(text, str):
-        raise ValueError("text must be a string.")
-    
-    # Get the frequency distribution of characters in the text.
-    frequency_distribution = get_ngram_frequency(text, 1)
-
-    # Compute the entropy of the text.
-    entropy = 0
-    for frequency in frequency_distribution.values():
-        probability = frequency / len(text)
-        entropy -= probability * math.log2(probability)
-
-    # Return the entropy of the text.
-    return entropy
-
-def compute_text_entropy_from_file(file_path: str) -> float:
-    """
-    Computes and returns the Shannon entropy of a file. This is useful for
-    determining whether a file is encrypted or not.
-
-    Args:
-        file_path (str): The path to the file to compute the entropy of.
-
-    Returns:
-        float: The Shannon entropy of the file.
-
-    Raises:
-        ValueError: If file_path is not a string.
-
-    """
-
-    #Check that file_path is a string.
-    if not isinstance(file_path, str):
-        raise ValueError("file_path must be a string.")
-    
-    # Get the frequency distribution of characters in the file.
-    frequency_distribution = get_ngram_frequency_from_file(file_path, 1)
-
-    # Compute the entropy of the file.
-    entropy = 0
-    for frequency in frequency_distribution.values():
-        probability = frequency / sum(frequency_distribution.values())
-        entropy -= probability * math.log2(probability)
-
-    # Return the entropy of the file.
-    return entropy
 
 def generate_ngram_frequencies(file_path: str, n=[1, 2, 3, 4]) -> None:
     """
@@ -623,232 +451,6 @@ def get_word_pattern(word: str) -> str:
     # Return the word pattern.
     return word
 
-def english_score(text: str) -> float:
-    """
-    Computes a score for a piece of text based on the frequency of the letters, bigrams, trigrams, and quadgrams in the text, as
-    well as the english word patterns in the text. Wraps the letter_frequency_score, bigram_frequency_score, trigram_frequency_score,
-    quadgram_frequency_score, and word_pattern_score functions.
-
-    Args:
-        text (str): The text to compute the english score for.
-
-    Raises:
-        ValueError: If text is not a non-empty string.
-
-    """
-    
-    # Check that text is a non-empty string.
-    if not isinstance(text, str) or text == "":
-        raise ValueError("text must be a non-empty string.")
-    
-    # Compute the letter frequency score.
-    letter_frequency_score = letter_frequency_score(text)
-    # Compute the bigram frequency score.
-    bigram_frequency_score = bigram_frequency_score(text)
-    # Compute the trigram frequency score.
-    trigram_frequency_score = trigram_frequency_score(text)
-    # Compute the quadgram frequency score.
-    quadgram_frequency_score = quadgram_frequency_score(text)
-    # Compute the word pattern score.
-    word_pattern_score = word_pattern_score(text)
-
-    # Compute the english score.
-    english_score = letter_frequency_score + bigram_frequency_score + trigram_frequency_score + quadgram_frequency_score + word_pattern_score
-
-    # Return the english score.
-    return english_score
-
-def letter_frequency_score(text: str, language: str = 'english') -> float:
-    """
-    Computes the mean of sum of squared errors between the letter frequencies in the text and the expected letter frequencies
-    for the indicated language.
-
-    Args:
-        text (str): The text to compute the letter frequency score for.
-        language (str): The language to compute the letter frequency score for. Defaults to 'english'.
-
-    Raises:
-        ValueError: If text is not a non-empty string.
-        ValueError: If language is not a non-empty string.
-    
-    Returns:
-        float: The letter frequency score for the text.
-    
-    """
-
-    # Import the numpy module.
-    import numpy as np
-
-    # Check that text is a non-empty string.
-    if not isinstance(text, str) or text == "":
-        raise ValueError("text must be a non-empty string.")
-    # Check that language is a non-empty string.
-    if not isinstance(language, str) or language == "":
-        raise ValueError("language must be a non-empty string.")
-    
-    # Imnitialize a 1-d numpy array to store the letter frequencies in the text.
-    text_letter_frequencies = np.zeros(26)
-    # Load the expected letter frequencies for the language.
-    language_letter_frequencies = np.loadtxt(f"text_tools/letter_frequencies/{language}_letter_frequencies.txt", delimiter=",")
-
-    # Convert the text to lowercase.
-    text = text.lower()
-
-    # Iterate over each letter in the language alphabet.
-    for letter in language_letter_frequencies[0]:
-        # Compute the letter frequency in the text.
-        letter_frequency = text.count(letter) / len(text)
-        # Add the letter frequency to the text_letter_frequencies array.
-        text_letter_frequencies[ord(letter) - 97] = letter_frequency
-
-    # Compute and return the mean of sum of squared errors between the letter frequencies in the text and the expected letter frequencies
-    # for the language.
-    return np.mean((text_letter_frequencies - language_letter_frequencies[1]) ** 2)
-
-def bigram_frequency_score(text: str, language: str = 'english') -> float:
-    """
-    Computes the mean of the sum of squared errors for the bigram frequencies in the text and the expected bigram frequencies
-    for the indicated language.
-
-    Args:
-        text (str): The text to compute the bigram frequency score for.
-        language (str): The language to compute the bigram frequency score for. Defaults to 'english'.
-
-    Raises:
-        ValueError: If text is not a non-empty string.
-        ValueError: If language is not a non-empty string.
-
-    Returns:   
-        float: The bigram frequency score for the text.
-    
-    """
-
-    # import the numpy module.
-    import numpy as np
-
-    # Check that text is a non-empty string.
-    if not isinstance(text, str) or text == "":
-        raise ValueError("text must be a non-empty string.")
-    # Check that language is a non-empty string.
-    if not isinstance(language, str) or language == "":
-        raise ValueError("language must be a non-empty string.")
-    
-    # Initialize a 2-d numpy array to store the bigram frequencies in the text.
-    text_bigram_frequencies = np.zeros((26, 26))
-
-    # Load the expected bigram frequencies for the language.
-    language_bigram_frequencies = np.loadtxt(f"text_tools/bigram_frequencies/{language}_bigram_frequencies.txt", delimiter=",")
-
-    # Convert the text to lowercase.
-    text = text.lower()
-
-    # Iterate over each bigram in the language alphabet.    
-    for bigram in language_bigram_frequencies[0]:
-        # Compute the bigram frequency in the text.
-        bigram_frequency = text.count(bigram) / len(text)
-        # Add the bigram frequency to the text_bigram_frequencies array.
-        text_bigram_frequencies[ord(bigram[0]) - 97][ord(bigram[1]) - 97] = bigram_frequency
-
-    # Compute and return the mean of sum of squared errors between the bigram frequencies in the text and the expected bigram frequencies
-    # for the language.
-    return np.mean((text_bigram_frequencies - language_bigram_frequencies[1]) ** 2)
-
-def trigram_frequency_score(text: str, language: str = 'english') -> float:
-    """
-    Computes the mean of the sum of squared errors for the trigram frequencies in the text and the expected trigram frequencies
-    for the indicated language.
-
-    Args:
-        text (str): The text to compute the trigram frequency score for.
-        language (str): The language to compute the trigram frequency score for. Defaults to 'english'.
-
-    Raises:
-        ValueError: If text is not a non-empty string.
-        ValueError: If language is not a non-empty string.
-
-    Returns:
-        float: The trigram frequency score for the text.
-
-    """
-
-    # import the numpy module.
-    import numpy as np
-
-    # Check that text is a non-empty string.
-    if not isinstance(text, str) or text == "":
-        raise ValueError("text must be a non-empty string.")
-    # Check that language is a non-empty string.
-    if not isinstance(language, str) or language == "":
-        raise ValueError("language must be a non-empty string.")
-    
-    # Initialize a 3-d numpy array to store the trigram frequencies in the text.
-    text_trigram_frequencies = np.zeros((26, 26, 26))
-
-    # Load the expected trigram frequencies for the language.
-    language_trigram_frequencies = np.loadtxt(f"text_tools/trigram_frequencies/{language}_trigram_frequencies.txt", delimiter=",")
-
-    # Convert the text to lowercase.
-    text = text.lower()
-
-    # Iterate over each trigram in the language alphabet.
-    for trigram in language_trigram_frequencies[0]:
-        # Compute the trigram frequency in the text.
-        trigram_frequency = text.count(trigram) / len(text)
-        # Add the trigram frequency to the text_trigram_frequencies array.
-        text_trigram_frequencies[ord(trigram[0]) - 97][ord(trigram[1]) - 97][ord(trigram[2]) - 97] = trigram_frequency
-
-    # Compute and return the mean of sum of squared errors between the trigram frequencies in the text and the expected trigram frequencies
-    # for the language.
-    return np.mean((text_trigram_frequencies - language_trigram_frequencies[1]) ** 2)
-
-def quadgram_frequency_score(text: str, language: str = 'english') -> float:
-    """
-    Computes the mean of the sum of squared errors for the quadgram frequencies in the text and the expected quadgram frequencies
-    for the indicated language.
-    
-    Args:
-        text (str): The text to compute the quadgram frequency score for.
-        language (str): The language to compute the quadgram frequency score for. Defaults to 'english'.
-        
-    Raises:
-        ValueError: If text is not a non-empty string.
-        ValueError: If language is not a non-empty string.
-        
-    Returns:
-        float: The quadgram frequency score for the text.
-    
-    """
-
-    # Import the numpy module.
-    import numpy as np
-
-    # Check that text is a non-empty string.
-    if not isinstance(text, str) or text == "":
-        raise ValueError("text must be a non-empty string.")
-    # Check that language is a non-empty string.
-    if not isinstance(language, str) or language == "":
-        raise ValueError("language must be a non-empty string.")
-    
-    # Initialize a 4-d numpy array to store the quadgram frequencies in the text.
-    text_quadgram_frequencies = np.zeros((26, 26, 26, 26))
-
-    # Load the expected quadgram frequencies for the language.
-    language_quadgram_frequencies = np.loadtxt(f"text_tools/quadgram_frequencies/{language}_quadgram_frequencies.txt", delimiter=",")
-
-    # Convert the text to lowercase.
-    text = text.lower()
-
-    # Iterate over each quadgram in the language alphabet.
-    for quadgram in language_quadgram_frequencies[0]:
-        # Compute the quadgram frequency in the text.
-        quadgram_frequency = text.count(quadgram) / len(text)
-        # Add the quadgram frequency to the text_quadgram_frequencies array.
-        text_quadgram_frequencies[ord(quadgram[0]) - 97][ord(quadgram[1]) - 97][ord(quadgram[2]) - 97][ord(quadgram[3]) - 97] = quadgram_frequency
-
-    # Compute and return the mean of sum of squared errors between the quadgram frequencies in the text and the expected quadgram frequencies
-    # for the language.
-    return np.mean((text_quadgram_frequencies - language_quadgram_frequencies[1]) ** 2)
-
 def ciphertext_partition_word_pattern_score(ciphertext_partition: list[str]) -> float:
     """
     Computes a word pattern score for a given partition of the ciphertext. The score is computed by computing total number
@@ -923,12 +525,12 @@ def generate_ciphertext_word_pattern_tree(ciphertext: str) -> list[dict]:
     tree = []
 
     # Perform a random partition of the ciphertext into large, likely substrings from the word pattern dictionary.
-    ciphertext_partition = random_partition(ciphertext, word_patterns)
+    ciphertext_partition = random_text_partition(ciphertext, word_patterns)
 
     # Iterate over each substring in the partition.
     for substring in ciphertext_partition:
         # Randomly partition the substring into smaller substrings until the substrings are all in the word pattern dictionary.
-        substring_partition = random_partition(substring, word_patterns)
+        substring_partition = random_text_partition(substring, word_patterns)
         # Initialize a list to store the children of the substring.
         children = []
 
@@ -979,6 +581,39 @@ def word_pattern_count(text_file: str, language: str = "english") -> dict[str, i
     
     """
 
+    # Check that text_file is a non-empty string.
+    if not isinstance(text_file, str) or text_file == "":
+        raise ValueError("text_file must be a non-empty string.")
+    # Check that language is a non-empty string.
+    if not isinstance(language, str) or language == "":
+        raise ValueError("language must be a non-empty string.")
+    
+    # Load the word patterns dictionary.
+    word_patterns = load_word_patterns()
+
+    # Initialize a dictionary to store the word pattern counts.
+    word_pattern_counts = {}
+
+    # Open the text file.
+    with open(text_file, "r") as file:
+        # Iterate over each line in the text file, removing non-alphabetic characters and converting to lowercase.
+        for line in file:
+            # Iterate over each word in the line.
+            for word in line.split():
+                # Remove non-alphabetic characters from the word.
+                word = "".join([character for character in word if character.isalpha()])
+                # Convert the word to lowercase.
+                word = word.lower()
+                # Get the word pattern of the word.
+                pattern = get_word_pattern(word)
+                # Check if the pattern is in the word patterns dictionary.
+                if pattern in word_patterns:
+                    # Increment the count of the pattern in the word pattern counts dictionary.
+                    word_pattern_counts[pattern] = word_pattern_counts.get(pattern, 0) + 1
+
+    # Return the word pattern counts dictionary.
+    return word_pattern_counts
+
 def word_pattern_relative_frequencies(file_path: str, language: str = "english") -> dict[str, int]:
     """
     Computes the relative frequency of each a word pattern dictionary's word patterns in each text in file_path. 
@@ -1006,10 +641,25 @@ def word_pattern_relative_frequencies(file_path: str, language: str = "english")
     if not isinstance(language, str) or language == "":
         raise ValueError("language must be a non-empty string.")
     
-    # Import the os module.
-    import os
+    # Load the word patterns dictionary.
+    word_patterns = load_word_patterns()
+    
+    # Use the word_pattern_count function to count the number of times each word pattern in the word patterns 
+    # dictionary appears in each text in file_path.
+    word_pattern_counts = word_pattern_count(file_path, language)
 
-    # Iterate over each text file in file_path, counting how many times each word
+    # Initialize a dictionary to store the word pattern relative frequencies.
+    word_pattern_relative_frequencies = {}
+
+    # Iterate over each word pattern in the word patterns dictionary.
+    for pattern in word_patterns:
+        # Compute the relative frequency of the word pattern.
+        relative_frequency = word_pattern_counts[pattern] / sum(word_pattern_counts.values())
+        # Add the relative frequency to the word pattern relative frequencies dictionary.
+        word_pattern_relative_frequencies[pattern] = relative_frequency
+
+    # Return the word pattern relative frequencies dictionary.
+    return word_pattern_relative_frequencies
 
     
 
