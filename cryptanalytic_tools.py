@@ -358,7 +358,6 @@ def generate_ngram_frequencies(file_path: str, n=[1, 2, 3, 4]) -> None:
     # Return the frequency distribution dictionary.
     return ngram_frequencies
 
-
 def load_ngram_frequencies(file_path: str) -> dict:
     """
     Loads a dictionary containing the relative frequency distribution of n-grams from a file. The format of 
@@ -441,7 +440,6 @@ def factorization_attack(n: int, algo='trial_division') -> tuple:
         raise Exception(f"Factors not found after {max_iterations} iterations of the {algo} algorithm.")
     return factors
 
-# A function that determines whether a text is in English or not based solely on word pattern frequencies.
 def is_language_word_pattern(text_word_patterns: str, threshold: float = 0.9, language: str = "english") -> bool:
     """
     Determines whether a text is in language or not by exploring the word patterns of the text and comparing them
