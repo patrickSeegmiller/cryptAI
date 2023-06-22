@@ -1,3 +1,4 @@
+from ngram_tools import get_ngram_frequency, get_ngram_frequency_from_file
 
 def language_score(text: str, language: str = 'english') -> float:
     """
@@ -251,7 +252,7 @@ def compute_text_entropy(text: str, type: str) -> float:
         https://en.wikipedia.org/wiki/R%C3%A9nyi_entropy
     """
 
-    # TODO: Currently only computes Shannon entropy. Add support for other types of entropy.
+    # TODO: Currently only computes Shannon entropy. Add support for other types of text entropy.
 
     #Check that text is a string.
     if not isinstance(text, str):
