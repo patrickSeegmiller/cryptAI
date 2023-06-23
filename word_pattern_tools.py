@@ -67,10 +67,9 @@ def load_word_patterns(language: str = "english") -> dict:
     # Return the dictionary of word patterns.
     return word_patterns
 
-def generate_word_patterns(text_file_path: str, json: bool="True") -> None:
+def generate_text_word_patterns(text_file_path: str, json: bool="True") -> None:
     """
-    Generates dictionares of English word patterns and their counts for use to generate a master file of word
-    patterns, as well as with the is_english function. 
+    Generates dictionares of English word patterns and their counts. 
     
     The patterns are strings of digits where each unique digit represents a distinct letter in the alphabet. For example, 
     the word pattern "0120" represents any four letter word where the first and last letters are the same, 
@@ -146,6 +145,66 @@ def generate_word_patterns(text_file_path: str, json: bool="True") -> None:
 
     return
     
+def generate_language_word_patterns(word_list_path: str, language: str = "english", json: bool = True) -> None:
+    """
+    Uses a word list in the the given language to produce a master file of word patterns for that language. The master file
+    is intended as the standard against which word patterns for texts under evaluations are compared.
+
+    Args:
+        word_list_path (str): The path to the word list to be used to generate the word patterns.
+        language (str): The language of the word list. Defaults to "english".
+        json (bool): Whether to save the word patterns as a JSON file. Defaults to True.
+
+    Raises:
+        ValueError: If word_list_path is not a non-empty string.
+        ValueError: If language is not in the list of supported languages, which is currently only "english".
+    
+    """
+
+    # TODO: Add support for other languages.
+
+    # Check that word_list_path is a non-empty string.
+    if not isinstance(word_list_path, str) or word_list_path == "":
+        raise ValueError("word_list_path must be a non-empty string.")
+    # Check that language is in the list of supported languages.
+    if language not in ["english"]:
+        raise ValueError(f"{language} is not a supported language.")
+    
+    # Initialize a dictionary to store word patterns as keys, and lists of words with those patterns as values.
+    word_patterns = {}
+
+    # Open the word list and iterate over each line.
+    with open(word_list_path, "r") as file:
+        for line in file:
+            # Strip the newline character from the line.
+            line = line.strip()
+            # Skip the line if it is empty.
+            if line == "":
+                continue
+            # Add the word to the word_patterns dictionary.
+            pattern = get_word_pattern(line)
+            if pattern in word_patterns:
+                word_patterns[pattern].append(line)
+            else:
+                word_patterns[pattern] = [line]
+
+    # Create a file path for the word patterns.
+    if json:
+        word_patterns_path = f"../text_tools/word_patterns/{language}_word_patterns.json"
+    else:
+        word_patterns_path = f"../text_tools/word_patterns/{language}_word_patterns.txt"
+
+    # Save the word patterns to a file.
+    if json:
+        with open(word_patterns_path, "w") as file:
+            json.dump(word_patterns, file)
+    else:
+        with open(word_patterns_path, "w") as file:
+            for pattern, words in word_patterns.items():
+                file.write(f"{pattern}: {words}\n")
+
+    return
+
 def get_word_pattern(word: str) -> str:
     """
     Produces the word pattern for a single word. The pattern is a string of digits where each unique digit represents a distinct
@@ -263,7 +322,6 @@ def generate_ciphertext_word_pattern_tree(ciphertext: str) -> list[dict]:
         substring_partition = random_text_partition(substring, word_patterns)
         # Initialize a list to store the children of the substring.
         children = []
-
 
 def random_text_partition(text: str, language: str = "english") -> list[str]:
     """

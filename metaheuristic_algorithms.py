@@ -2,7 +2,8 @@
 import math
 import random
 
-from cryptanalytic_tools import compute_text_entropy, get_ngram_frequency, get_ngram_frequency_from_file, load_ngram_frequencies
+from ngram_tools import get_ngram_frequency, get_ngram_frequency_from_file, load_ngram_frequencies
+from cryptanalytic_metrics import compute_text_entropy
 
 class NGramSimulatedAnnealing():
     def __init__(self, text: str, n=[1, 2, 3, 4]) -> None:

@@ -1,7 +1,7 @@
 from random import randint
 import math
 
-from whole_number_operations import fast_powering_algorithm, integer_sqrt, greatest_common_divisor
+from whole_number_tools import fast_powering_algorithm, integer_sqrt, greatest_common_divisor
 from prime_number_sieves import sieve_of_eratosthenes
 
 def trial_division_primality_test(n: int) -> bool:

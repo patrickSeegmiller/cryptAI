@@ -1,5 +1,5 @@
-from whole_number_operations import fast_powering_algorithm, integer_sqrt, is_square, integer_nthrt, find_modular_inverse, greatest_common_divisor, absolute_value, integer_quadratic_formula, get_factor_base
-from rational_number_operations import continued_fraction_expansion, get_continued_fraction_convergents
+from whole_number_tools import fast_powering_algorithm, integer_sqrt, is_square, integer_nthrt, find_modular_inverse, greatest_common_divisor, absolute_value, integer_quadratic_formula, get_factor_base
+from rational_number_tools import continued_fraction_expansion, get_continued_fraction_convergents
 from primality_tests import miller_rabin_primality_test
 
 def continued_fraction_factorization(e: int, N: int) -> list[int]:

@@ -1,5 +1,52 @@
 from ngram_tools import get_ngram_frequency, get_ngram_frequency_from_file
 
+def index_of_coincidence(text):
+    """
+    Calculates the index of coincidence of a string of text.
+
+    Args:
+        text (str): The text to calculate the index of coincidence of.
+
+    Returns:
+        float: The index of coincidence of the text.
+
+    Raises:
+        ValueError: If text is not a string.
+
+    References:
+        https://en.wikipedia.org/wiki/Index_of_coincidence
+    """
+
+    # Input validation
+    if not isinstance(text, str):
+        raise ValueError("text must be a string.")
+
+    # Initialize a dictionary to count the number of occurrences of each letter
+    # in the text.
+    letter_counts = {}
+
+    # Iterate over each letter in the text, adding it to the dictionary or
+    # incrementing its count if it already exists.
+    for letter in text:
+        if not letter.isalpha():
+            continue
+        if letter in letter_counts:
+            letter_counts[letter] += 1
+        else:
+            letter_counts[letter] = 1
+
+    # Calculate the index of coincidence by summing the product of the number of
+    # occurrences of each letter and the number of occurrences of each letter
+    # minus 1, then dividing by the product of the length of the text and the
+    # length of the text minus 1.
+    index_of_coincidence = 0
+    for letter in letter_counts:
+        index_of_coincidence += letter_counts[letter] * (letter_counts[letter] - 1)
+    index_of_coincidence /= len(text) * (len(text) - 1)
+
+    # Return the index of coincidence.
+    return index_of_coincidence
+
 def language_score(text: str, language: str = 'english') -> float:
     """
     Computes a language score for a piece of text based on the frequency of the letters, bigrams, trigrams, and 
@@ -39,7 +86,6 @@ def language_score(text: str, language: str = 'english') -> float:
 
     # Return the english score.
     return english_score
-
 
 def letter_frequency_score(text: str, language: str = 'english') -> float:
     """
@@ -232,6 +278,15 @@ def quadgram_frequency_score(text: str, language: str = 'english') -> float:
     # for the language.
     return np.mean((text_quadgram_frequencies - language_quadgram_frequencies[1]) ** 2)
 
+def word_pattern_frequency_score(text: str, language: str = 'english') -> float:
+    """
+    Computes and returns the word pattern frequency score, which equals the sum over the mean squared differences between
+    the word pattern relative frequencies present as observed in text and the expected relative frequencies for the indicated
+    language.
+
+    Args:
+        text (str): The text to compute word pattern frequency score.
+    """
 
 def compute_text_entropy(text: str, type: str) -> float:
     """

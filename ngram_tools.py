@@ -107,3 +107,99 @@ def get_ngram_frequency_from_file(file_path: str, n: int) -> dict:
 
     # Return the frequency distribution dictionary.
     return frequency_distribution
+
+def generate_ngram_frequencies(file_path: str, n=[1, 2, 3, 4]) -> None:
+    """
+    Generates a file containing the relative frequency distribution of n-grams from a file of text.
+    The generated file consists of max(n) sections sepearated by a line containing only the character "#" and
+    each section contains the frequency distribution of n-grams of length n. The format of each section is as follows:
+        n-gram, relative_frequency
+        n-gram, relative_frequency
+        ...
+    Only the 20 most common n-grams are included in the file for n-grams of length greater than one.
+
+    Args:
+        file_path (str): The path to the file to compute the frequency distribution of.
+        n (list): A list of integers representing the number of characters in each n-gram.
+
+    Raises:
+        ValueError: If file_path is not a string or n is not a list of positive integers.
+
+    """
+
+    # Check that file_path is a valid.
+    if not isinstance(file_path, str):
+        raise ValueError("file_path must be a string.")
+    
+    # Check that n is a list of positive integers.
+    if not isinstance(n, list) or not all(isinstance(i, int) and i > 0 for i in n):
+        raise ValueError("n must be a list of positive integers.")
+    
+    # Initialize a dictionary to store the frequency distributions of the different n-grams.
+    ngram_frequencies = {}
+
+    # Open the file and iterate over each line.
+    with open(file_path, "r") as file:
+        for line in file:
+            # Iterate over each n-gram in the line, adding it to the dictionary or
+            # incrementing its count if it already exists.
+            for i in range(len(line) - max(n) + 1):
+                for j in n:
+                    n_gram = line[i:i+j]
+                    if n_gram in ngram_frequencies:
+                        ngram_frequencies[n_gram] += 1
+                    else:
+                        ngram_frequencies[n_gram] = 1
+
+    # Sort the n-grams in each frequency distribution by their frequency.
+    for ngram_frequency in ngram_frequencies.values():
+        ngram_frequency = dict(sorted(ngram_frequency.items(), key=lambda item: item[1], reverse=True))
+
+    # Write the frequency distributions to a file.
+    with open("ngram_frequencies.txt", "w") as file:
+        for i in range(max(n)):
+            for ngram, frequency in ngram_frequencies[i].items():
+                file.write(f"{ngram}, {frequency}\n")
+            file.write("#\n")
+    
+    # Return the frequency distribution dictionary.
+    return ngram_frequencies
+
+def load_ngram_frequencies(file_path: str) -> dict:
+    """
+    Loads a dictionary containing the relative frequency distribution of n-grams from a file. The format of 
+    is as follows:
+        n-gram, relative_frequency
+        n-gram, relative_frequency
+        ...
+    Only the 20 most common n-grams are included in the file for n-grams of length greater than one (for now!).
+    """
+
+    # Check that file_path is a string.
+    if not isinstance(file_path, str):
+        raise ValueError("file_path must be a string.")
+    
+    # Initialize a dictionary to store the frequency distributions of the different n-grams.
+    ngram_frequencies = {}
+
+    # Initialize the n-gram size.
+    n = 1
+
+    # Open the file and iterate over each line.
+    with open(file_path, "r") as file:
+        # Skip the first line.
+        next(file)
+
+        # For each of the four sections, iterate over each line, adding the n-gram and its
+        # relative frequency to a dictionary. Then add the dictionary to the ngram_frequencies dictionary.
+        for line in file:
+            if line == "#\n":
+                frequency_distribution = {}
+                ngram_frequencies[n] = frequency_distribution
+                n += 1
+            else:
+                ngram, frequency = line.split(", ")
+                frequency_distribution[ngram] = float(frequency)
+        
+    # Return the ngram_frequencies dictionary.
+    return ngram_frequencies
